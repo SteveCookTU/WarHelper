@@ -82,7 +82,7 @@ public class ReactionListener extends ListenerAdapter {
                             eb.addBlankField(false);
                         }
                         eb.setFooter(uuid.toString());
-                        e.getChannel().sendMessage("everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
+                        e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
                             message.addReaction("\uD83D\uDEE1").queue();
                             message.addReaction("\uD83C\uDFF9").queue();
                             message.addReaction("\uD83D\uDDE1").queue();
