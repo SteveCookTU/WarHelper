@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -116,6 +117,11 @@ public class ReactionListener extends ListenerAdapter {
                 }
             }
         }
+    }
+
+    @Override
+    public void onGuildMessageDelete(GuildMessageDeleteEvent e) {
+        wh.removeWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), e.getMessageIdLong());
     }
 
     @Override

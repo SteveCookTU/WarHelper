@@ -137,8 +137,8 @@ public class AlertConnector {
         warMessages.add(new WarMessage(guildID, channelID, messageID));
     }
 
-    public void removeWarMessage(long guildID, long channelID, long messageID) {
-        warMessages.remove(new WarMessage(guildID, channelID, messageID));
+    public boolean removeWarMessage(long guildID, long channelID, long messageID) {
+        return warMessages.remove(new WarMessage(guildID, channelID, messageID));
     }
 
     public List<Long> getGuildIDs() {

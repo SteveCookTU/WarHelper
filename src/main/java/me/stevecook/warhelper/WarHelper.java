@@ -73,6 +73,21 @@ public class WarHelper {
         ac.addWarMessage(guildID, channelID, messageID);
     }
 
+    public void removeWarMessage(long guildID, long channelID, long messageID) {
+        for (AlertConnector a : alertConnectors) {
+            if(a.removeWarMessage(guildID, channelID, messageID)) {
+                return;
+            }
+        }
+
+        for (AlertConnector a : alertArchive) {
+            if(a.removeWarMessage(guildID, channelID, messageID)) {
+                return;
+            }
+        }
+
+    }
+
     public boolean isValidWarMessage(long guildID, long channelID, long messageID) {
         for (AlertConnector ac : alertConnectors) {
             if (ac.containsWarMessage(guildID, channelID, messageID)) {
