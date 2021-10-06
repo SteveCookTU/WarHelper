@@ -28,6 +28,7 @@
                             <mainClass>me.stevecook.warhelper.WarHelper</mainClass>
                         </transformer>
                     </transformers>
+                    <finalName>warhelper</finalName>
                 </configuration>
             </plugin>
         </plugins>
