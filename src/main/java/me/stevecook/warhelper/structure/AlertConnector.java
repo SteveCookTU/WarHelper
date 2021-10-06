@@ -160,6 +160,15 @@ public class AlertConnector {
         return false;
     }
 
+    public boolean channelContainsWarMessage(long guildID, long channelID) {
+        for(WarMessage wm : warMessages) {
+            if(wm.getGuildID() == guildID && wm.getChannelID() == channelID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Long> getUsers() {
         return Stream.of(tanks.keySet(), rdps.keySet(), mdps.keySet(), healers.keySet(), tentative.keySet(), notAvailable.keySet(), artillery.keySet()).flatMap(Set::stream).collect(Collectors.toList());
     }

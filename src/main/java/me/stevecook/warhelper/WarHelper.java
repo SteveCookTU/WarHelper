@@ -9,10 +9,7 @@ import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -30,6 +27,7 @@ public class WarHelper {
 
     private final List<AlertConnector> alertConnectors;
     private final List<AlertConnector> alertArchive;
+    private final Map<String, List<String>> permissions;
 
     private final JDA jda;
     private final Gson gson;
@@ -50,6 +48,7 @@ public class WarHelper {
 
         alertConnectors = loadActiveAlerts();
         alertArchive = loadArchivedAlerts();
+        permissions = loadPermissions();
     }
 
     public static void main(String[] args) throws LoginException, IOException {
@@ -85,7 +84,18 @@ public class WarHelper {
                 return;
             }
         }
+    }
 
+    public boolean channelContainsWarMessage(long guildID, long channelID, UUID uuid) {
+        for(AlertConnector ac : alertConnectors) {
+            if(ac.getCode().equals(uuid) && ac.channelContainsWarMessage(guildID, channelID))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean hasPermission(String guildName, List<Role> roles) {
+        return permissions.containsKey(guildName) && roles.stream().anyMatch(r -> permissions.get(guildName).contains(r.getName()));
     }
 
     public boolean isValidWarMessage(long guildID, long channelID, long messageID) {
@@ -123,9 +133,7 @@ public class WarHelper {
                                 eb.addField(f);
                             }
                             eb.setFooter(Objects.requireNonNull(mb.getFooter()).getText() + " - Archived");
-
                             message.editMessageEmbeds(eb.build()).queue(message1 -> message1.clearReactions().queue());
-
                         }
                     });
                 }
@@ -153,13 +161,26 @@ public class WarHelper {
         return new ArrayList<>();
     }
 
+    public Map<String, List<String>> loadPermissions() throws IOException {
+        if(Files.exists(Path.of("permissions.json"))) {
+            return gson.fromJson(new String(Files.readAllBytes(Path.of("permissions.json"))), new TypeToken<Map<String, List<String>>>() {
+            }.getType());
+        }
+        return new HashMap<>();
+    }
+
     public void saveData() throws IOException {
         Type type = new TypeToken<List<AlertConnector>>() {
         }.getType();
+
+        Type type2 = new TypeToken<Map<String, List<String>>>(){}.getType();
+
         File f = new File("connectors.json");
         File f2 = new File("archive.json");
+        File f3 = new File("permissions.json");
         boolean success = f.createNewFile();
         success = f2.createNewFile();
+        success = f3.createNewFile();
 
         FileWriter fr = new FileWriter(f);
         fr.write(gson.toJson(alertConnectors, type));
@@ -168,6 +189,11 @@ public class WarHelper {
 
         fr = new FileWriter(f2);
         fr.write(gson.toJson(alertArchive, type));
+        fr.flush();
+        fr.close();
+
+        fr = new FileWriter(f3);
+        fr.write(gson.toJson(permissions, type2));
         fr.flush();
         fr.close();
     }

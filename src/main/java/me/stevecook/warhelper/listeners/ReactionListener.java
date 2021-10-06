@@ -33,7 +33,7 @@ public class ReactionListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.isFromGuild()) {
-            if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getMember()) || e.getMember().getEffectiveName().equalsIgnoreCase("[VP] EzPzStreamz")) {
+            if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getMember())) {
                 String[] args = e.getMessage().getContentRaw().split(" ");
                 if (args.length == 4) {
                     if (args[0].equalsIgnoreCase("!waralert")) {
@@ -48,56 +48,57 @@ public class ReactionListener extends ListenerAdapter {
                         }
 
                         UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + args[1].toLowerCase()).getBytes());
+                        if (!wh.channelContainsWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), uuid)) {
+                            EmbedBuilder eb = new EmbedBuilder();
 
-                        EmbedBuilder eb = new EmbedBuilder();
+                            StringBuilder builder = new StringBuilder();
+                            for (int i = 0; i < args[1].length(); i++) {
+                                if (args[1].charAt(i) != '_')
+                                    builder.append(":regional_indicator_").append(args[1].substring(i, i + 1).toLowerCase()).append(":").append(" ");
+                                else
+                                    builder.append("\t");
+                            }
+                            eb.setTitle(builder.toString().trim());
 
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 0; i < args[1].length(); i++) {
-                            if (args[1].charAt(i) != '_')
-                                builder.append(":regional_indicator_").append(args[1].substring(i, i + 1).toLowerCase()).append(":").append(" ");
-                            else
-                                builder.append("\t");
+                            eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
+                            eb.addBlankField(true);
+                            eb.addField(":clock1: " + time.format(DateTimeFormatter.ofPattern("hh:mma")), "", true);
+
+                            if (wh.getAlertConnector(uuid) != null) {
+                                fillEmbed(eb, uuid);
+                            } else {
+                                eb.addField(":shield: TANK :shield:", "", true);
+                                eb.addBlankField(true);
+                                eb.addField(":archery: RDPS :archery:", "", true);
+                                eb.addBlankField(false);
+                                eb.addField(":dagger: MDPS :dagger:", "", true);
+                                eb.addBlankField(true);
+                                eb.addField(":heart: HEALER :heart:", "", true);
+                                eb.addBlankField(false);
+                                eb.addField(":boom: HEALER :boom:", "", true);
+                                eb.addBlankField(false);
+                                eb.addField(":question: Tentative :question:", "", true);
+                                eb.addBlankField(true);
+                                eb.addField(":no_entry: Not Available :no_entry:", "", true);
+                                eb.addBlankField(false);
+                            }
+                            eb.setFooter(uuid.toString());
+                            e.getChannel().sendMessage("everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
+                                message.addReaction("\uD83D\uDEE1").queue();
+                                message.addReaction("\uD83C\uDFF9").queue();
+                                message.addReaction("\uD83D\uDDE1").queue();
+                                message.addReaction("❤").queue();
+                                message.addReaction("\uD83D\uDCA5").queue();
+                                message.addReaction("❓").queue();
+                                message.addReaction("⛔").queue();
+                                wh.addWarMessage(message.getGuild().getIdLong(),
+                                        message.getChannel().getIdLong(),
+                                        message.getIdLong(),
+                                        date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
+                                                time.format(DateTimeFormatter.ofPattern("hh:mma")) +
+                                                args[1].toLowerCase());
+                            }));
                         }
-                        eb.setTitle(builder.toString().trim());
-
-                        eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
-                        eb.addBlankField(true);
-                        eb.addField(":clock1: " + time.format(DateTimeFormatter.ofPattern("hh:mma")), "", true);
-
-                        if (wh.getAlertConnector(uuid) != null) {
-                            fillEmbed(eb, uuid);
-                        } else {
-                            eb.addField(":shield: TANK :shield:", "", true);
-                            eb.addBlankField(true);
-                            eb.addField(":archery: RDPS :archery:", "", true);
-                            eb.addBlankField(false);
-                            eb.addField(":dagger: MDPS :dagger:", "", true);
-                            eb.addBlankField(true);
-                            eb.addField(":heart: HEALER :heart:", "", true);
-                            eb.addBlankField(false);
-                            eb.addField(":boom: HEALER :boom:", "", true);
-                            eb.addBlankField(false);
-                            eb.addField(":question: Tentative :question:", "", true);
-                            eb.addBlankField(true);
-                            eb.addField(":no_entry: Not Available :no_entry:", "", true);
-                            eb.addBlankField(false);
-                        }
-                        eb.setFooter(uuid.toString());
-                        e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
-                            message.addReaction("\uD83D\uDEE1").queue();
-                            message.addReaction("\uD83C\uDFF9").queue();
-                            message.addReaction("\uD83D\uDDE1").queue();
-                            message.addReaction("❤").queue();
-                            message.addReaction("\uD83D\uDCA5").queue();
-                            message.addReaction("❓").queue();
-                            message.addReaction("⛔").queue();
-                            wh.addWarMessage(message.getGuild().getIdLong(),
-                                    message.getChannel().getIdLong(),
-                                    message.getIdLong(),
-                                    date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
-                                            time.format(DateTimeFormatter.ofPattern("hh:mma")) +
-                                            args[1].toLowerCase());
-                        }));
                         e.getMessage().delete().queue();
                     }
                 } else if (args.length == 1) {
@@ -116,6 +117,7 @@ public class ReactionListener extends ListenerAdapter {
                     }
                 }
             }
+
         }
     }
 
@@ -144,32 +146,32 @@ public class ReactionListener extends ListenerAdapter {
                             ac.addRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "\uD83D\uDEE1" -> {
-                            if (!ac.getTanks().containsKey(e.getUserIdLong()))
+                            if (ac.getTanks().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addTank(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "\uD83D\uDDE1" -> {
-                            if (!ac.getMDPS().containsKey(e.getUserIdLong()))
+                            if (ac.getMDPS().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addMDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "❤" -> {
-                            if (!ac.getHealers().containsKey(e.getUserIdLong()))
+                            if (ac.getHealers().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addHealer(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "\uD83D\uDCA5" -> {
-                            if (!ac.getArtillery().containsKey(e.getUserIdLong()))
+                            if (ac.getArtillery().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addArtillery(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "❓" -> {
-                            if (!ac.getTentative().containsKey(e.getUserIdLong()))
+                            if (ac.getTentative().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addTentative(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "⛔" -> {
-                            if (!ac.getNotAvailable().containsKey(e.getUserIdLong()))
+                            if (ac.getNotAvailable().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addNotAvailable(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
@@ -238,12 +240,7 @@ public class ReactionListener extends ListenerAdapter {
     }
 
     private boolean hasPermission(@NotNull Member m) {
-        for (Role r :
-                m.getRoles()) {
-            if (r.getName().equalsIgnoreCase("Company Governor"))
-                return true;
-        }
-        return false;
+        return wh.hasPermission(m.getGuild().getName(), m.getRoles());
     }
 
     private void fillEmbed(EmbedBuilder eb, UUID uuid) {
