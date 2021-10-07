@@ -143,12 +143,12 @@ public class ReactionListener extends ListenerAdapter {
                         return;
 
                     switch (reactionName) {
-                        case "\uD83C\uDFF9" -> {
+                        case "\uD83E\uDE84" -> {
                             if (ac.getERDPS().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addERDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
-                        case "\uD83E\uDE84" -> {
+                        case "\uD83C\uDFF9" -> {
                             if (ac.getPRDPS().containsKey(e.getUserIdLong()))
                                 return;
                             ac.addPRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
@@ -205,12 +205,12 @@ public class ReactionListener extends ListenerAdapter {
                         return;
 
                     switch (reactionName) {
-                        case "\uD83C\uDFF9" -> {
+                        case "\uD83E\uDE84" -> {
                             if (!ac.getERDPS().containsKey(e.getUserIdLong()) || ac.getERDPS().get(e.getUserIdLong()) != e.getGuild().getIdLong())
                                 return;
                             ac.removeERDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
-                        case "\uD83E\uDE84" -> {
+                        case "\uD83C\uDFF9" -> {
                             if (!ac.getPRDPS().containsKey(e.getUserIdLong()) || ac.getPRDPS().get(e.getUserIdLong()) != e.getGuild().getIdLong())
                                 return;
                             ac.removePRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
