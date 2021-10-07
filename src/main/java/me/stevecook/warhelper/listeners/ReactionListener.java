@@ -30,6 +30,8 @@ public class ReactionListener extends ListenerAdapter {
         this.wh = wh;
     }
 
+    private static final String[] REACTIONS = {"\uD83D\uDEE1", "\uD83D\uDDE1", "\uD83C\uDFF9", "\uD83E\uDE84", "❤", "\uD83D\uDCA5", "❓", "⛔"};
+
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.isFromGuild()) {
@@ -40,8 +42,8 @@ public class ReactionListener extends ListenerAdapter {
                         LocalDate date;
                         LocalTime time;
                         try {
-                            date = LocalDate.parse(args[2], DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-                            time = LocalTime.parse(args[3], DateTimeFormatter.ofPattern("hh:mma"));
+                            date = LocalDate.parse(args[2], DateTimeFormatter.ofPattern("M/d/yyyy"));
+                            time = LocalTime.parse(args[3].substring(0, args[3].length() - 2) + args[3].substring(args[3].length() - 2).toUpperCase(), DateTimeFormatter.ofPattern("h:mma"));
                         } catch (DateTimeParseException ex) {
                             e.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage("The date or time entered was invalid. Please use the formats MM/dd/yyyy and hh:mma respectively. Ex: 02/10/2022 and 12:30pm").queue());
                             return;
@@ -69,13 +71,15 @@ public class ReactionListener extends ListenerAdapter {
                             } else {
                                 eb.addField(":shield: TANK :shield:", "", true);
                                 eb.addBlankField(true);
-                                eb.addField(":archery: RDPS :archery:", "", true);
-                                eb.addBlankField(false);
                                 eb.addField(":dagger: MDPS :dagger:", "", true);
-                                eb.addBlankField(true);
-                                eb.addField(":heart: HEALER :heart:", "", true);
                                 eb.addBlankField(false);
-                                eb.addField(":boom: HEALER :boom:", "", true);
+                                eb.addField(":archery: Physical RDPS :archery:", "", true);
+                                eb.addBlankField(true);
+                                eb.addField(":magic_wand: Elemental RDPS :magic_wand:", "", true);
+                                eb.addBlankField(false);
+                                eb.addField(":heart: HEALER :heart:", "", true);
+                                eb.addBlankField(true);
+                                eb.addField(":boom: ARTILLERY :boom:", "", true);
                                 eb.addBlankField(false);
                                 eb.addField(":question: Tentative :question:", "", true);
                                 eb.addBlankField(true);
@@ -83,14 +87,10 @@ public class ReactionListener extends ListenerAdapter {
                                 eb.addBlankField(false);
                             }
                             eb.setFooter(uuid.toString());
-                            e.getChannel().sendMessage("everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
-                                message.addReaction("\uD83D\uDEE1").queue();
-                                message.addReaction("\uD83C\uDFF9").queue();
-                                message.addReaction("\uD83D\uDDE1").queue();
-                                message.addReaction("❤").queue();
-                                message.addReaction("\uD83D\uDCA5").queue();
-                                message.addReaction("❓").queue();
-                                message.addReaction("⛔").queue();
+                            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
+                                for(String s : REACTIONS) {
+                                    message.addReaction(s).queue();
+                                }
                                 wh.addWarMessage(message.getGuild().getIdLong(),
                                         message.getChannel().getIdLong(),
                                         message.getIdLong(),
@@ -113,6 +113,9 @@ public class ReactionListener extends ListenerAdapter {
                 } else if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("!wararchive")) {
                         wh.archiveAlertConnector(UUID.fromString(args[1]));
+                        e.getMessage().delete().queue();
+                    } else if(args[0].equalsIgnoreCase("!warrefresh")) {
+                        updateEmbeds(UUID.fromString(args[1]));
                         e.getMessage().delete().queue();
                     }
                 }
@@ -141,9 +144,14 @@ public class ReactionListener extends ListenerAdapter {
 
                     switch (reactionName) {
                         case "\uD83C\uDFF9" -> {
-                            if (ac.getRDPS().containsKey(e.getUserIdLong()))
+                            if (ac.getERDPS().containsKey(e.getUserIdLong()))
                                 return;
-                            ac.addRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
+                            ac.addERDPS(e.getUserIdLong(), e.getGuild().getIdLong());
+                        }
+                        case "\uD83E\uDE84" -> {
+                            if (ac.getPRDPS().containsKey(e.getUserIdLong()))
+                                return;
+                            ac.addPRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "\uD83D\uDEE1" -> {
                             if (ac.getTanks().containsKey(e.getUserIdLong()))
@@ -198,9 +206,14 @@ public class ReactionListener extends ListenerAdapter {
 
                     switch (reactionName) {
                         case "\uD83C\uDFF9" -> {
-                            if (!ac.getRDPS().containsKey(e.getUserIdLong()) || ac.getRDPS().get(e.getUserIdLong()) != e.getGuild().getIdLong())
+                            if (!ac.getERDPS().containsKey(e.getUserIdLong()) || ac.getERDPS().get(e.getUserIdLong()) != e.getGuild().getIdLong())
                                 return;
-                            ac.removeRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
+                            ac.removeERDPS(e.getUserIdLong(), e.getGuild().getIdLong());
+                        }
+                        case "\uD83E\uDE84" -> {
+                            if (!ac.getPRDPS().containsKey(e.getUserIdLong()) || ac.getPRDPS().get(e.getUserIdLong()) != e.getGuild().getIdLong())
+                                return;
+                            ac.removePRDPS(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                         case "\uD83D\uDEE1" -> {
                             if (!ac.getTanks().containsKey(e.getUserIdLong()) || ac.getTanks().get(e.getUserIdLong()) != e.getGuild().getIdLong())
@@ -248,7 +261,8 @@ public class ReactionListener extends ListenerAdapter {
         AlertConnector ac = wh.getAlertConnector(uuid);
         Guild temp;
         StringBuilder tanks = new StringBuilder();
-        StringBuilder rdps = new StringBuilder();
+        StringBuilder erdps = new StringBuilder();
+        StringBuilder prdps = new StringBuilder();
         StringBuilder mdps = new StringBuilder();
         StringBuilder healers = new StringBuilder();
         StringBuilder tentative = new StringBuilder();
@@ -280,14 +294,26 @@ public class ReactionListener extends ListenerAdapter {
                 }
             }
 
-            if (ac.getRDPS().containsValue(l)) {
-                rdps.append(guildInitials).append("\n");
+            if (ac.getERDPS().containsValue(l)) {
+                erdps.append(guildInitials).append("\n");
                 for (long id :
-                        ac.getRDPS().keySet()) {
-                    if (ac.getRDPS().get(id) == l) {
-                        temp = jda.getGuildById(ac.getRDPS().get(id));
+                        ac.getERDPS().keySet()) {
+                    if (ac.getERDPS().get(id) == l) {
+                        temp = jda.getGuildById(ac.getERDPS().get(id));
                         assert temp != null;
-                        rdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        erdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                    }
+                }
+            }
+
+            if (ac.getPRDPS().containsValue(l)) {
+                prdps.append(guildInitials).append("\n");
+                for (long id :
+                        ac.getPRDPS().keySet()) {
+                    if (ac.getPRDPS().get(id) == l) {
+                        temp = jda.getGuildById(ac.getPRDPS().get(id));
+                        assert temp != null;
+                        prdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
                     }
                 }
             }
@@ -355,12 +381,14 @@ public class ReactionListener extends ListenerAdapter {
 
         eb.addField(":shield: TANK :shield:", tanks.toString().trim(), true);
         eb.addBlankField(true);
-        eb.addField(":archery: RDPS :archery:", rdps.toString().trim(), true);
-        eb.addBlankField(false);
         eb.addField(":dagger: MDPS :dagger:", mdps.toString().trim(), true);
-        eb.addBlankField(true);
-        eb.addField(":heart: HEALER :heart:", healers.toString().trim(), true);
         eb.addBlankField(false);
+        eb.addField(":archery: Physical RDPS :archery:", prdps.toString().trim(), true);
+        eb.addBlankField(true);
+        eb.addField(":magic_wand: Elemental RDPS :magic_wand:", erdps.toString().trim(), true);
+        eb.addBlankField(false);
+        eb.addField(":heart: HEALER :heart:", healers.toString().trim(), true);
+        eb.addBlankField(true);
         eb.addField(":boom: ARTILLERY :boom:", artillery.toString().trim(), true);
         eb.addBlankField(false);
         eb.addField(":question: Tentative :question:", tentative.toString().trim(), true);
@@ -372,31 +400,39 @@ public class ReactionListener extends ListenerAdapter {
     private void updateEmbeds(UUID uuid) {
         JDA jda = wh.getJda();
         AlertConnector ac = wh.getAlertConnector(uuid);
-        for (WarMessage wm :
-                ac.getWarMessages()) {
-            Guild g;
-            g = jda.getGuildById(wm.getGuildID());
-            assert g != null;
-            TextChannel tc = g.getTextChannelById(wm.getChannelID());
-            assert tc != null;
-            tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
-                MessageEmbed original = message.getEmbeds().get(0);
+        if(ac != null) {
+            for (WarMessage wm :
+                    ac.getWarMessages()) {
+                Guild g;
+                g = jda.getGuildById(wm.getGuildID());
+                assert g != null;
+                TextChannel tc = g.getTextChannelById(wm.getChannelID());
+                assert tc != null;
+                tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
+                    MessageEmbed original = message.getEmbeds().get(0);
 
-                EmbedBuilder eb = new EmbedBuilder();
+                    EmbedBuilder eb = new EmbedBuilder();
 
-                eb.setTitle(original.getTitle());
+                    eb.setTitle(original.getTitle());
 
-                eb.addField(original.getFields().get(0));
-                eb.addBlankField(true);
-                eb.addField(original.getFields().get(2));
+                    eb.addField(original.getFields().get(0));
+                    eb.addBlankField(true);
+                    eb.addField(original.getFields().get(2));
 
-                fillEmbed(eb, uuid);
+                    fillEmbed(eb, uuid);
 
-                eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
+                    eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
 
-                message.editMessageEmbeds(eb.build()).queue();
+                    message.editMessageEmbeds(eb.build()).queue();
 
-            });
+                    for(String s : REACTIONS) {
+                        if(message.getReactions().stream().noneMatch(r -> r.getReactionEmote().getName().equalsIgnoreCase(s))) {
+                            message.addReaction(s).queue();
+                        }
+                    }
+
+                });
+            }
         }
     }
 

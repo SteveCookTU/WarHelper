@@ -8,7 +8,8 @@ public class AlertConnector {
 
     private final UUID code;
     private final Map<Long, Long> tanks;
-    private final Map<Long, Long> rdps;
+    private final Map<Long, Long> erdps;
+    private final Map<Long, Long> prdps;
     private final Map<Long, Long> mdps;
     private final Map<Long, Long> healers;
     private final Map<Long, Long> tentative;
@@ -19,7 +20,8 @@ public class AlertConnector {
     public AlertConnector(String toEncode) {
         code = UUID.nameUUIDFromBytes(toEncode.getBytes());
         tanks = new HashMap<>();
-        rdps = new HashMap<>();
+        erdps = new HashMap<>();
+        prdps = new HashMap<>();
         mdps = new HashMap<>();
         healers = new HashMap<>();
         tentative = new HashMap<>();
@@ -33,9 +35,14 @@ public class AlertConnector {
             tanks.put(userID, guildID);
     }
 
-    public void addRDPS(long userID, long guildID) {
+    public void addERDPS(long userID, long guildID) {
         if (!getUsers().contains(userID))
-            rdps.put(userID, guildID);
+            erdps.put(userID, guildID);
+    }
+
+    public void addPRDPS(long userID, long guildID) {
+        if (!getUsers().contains(userID))
+            prdps.put(userID, guildID);
     }
 
     public void addMDPS(long userID, long guildID) {
@@ -69,9 +76,15 @@ public class AlertConnector {
         }
     }
 
-    public void removeRDPS(long userID, long guildID) {
-        if (rdps.containsKey(userID) && rdps.get(userID) == guildID) {
-            rdps.remove(userID);
+    public void removeERDPS(long userID, long guildID) {
+        if (erdps.containsKey(userID) && erdps.get(userID) == guildID) {
+            erdps.remove(userID);
+        }
+    }
+
+    public void removePRDPS(long userID, long guildID) {
+        if (prdps.containsKey(userID) && prdps.get(userID) == guildID) {
+            prdps.remove(userID);
         }
     }
 
@@ -109,9 +122,11 @@ public class AlertConnector {
         return tanks;
     }
 
-    public Map<Long, Long> getRDPS() {
-        return rdps;
+    public Map<Long, Long> getERDPS() {
+        return erdps;
     }
+
+    public Map<Long, Long> getPRDPS() { return prdps; }
 
     public Map<Long, Long> getMDPS() {
         return mdps;
@@ -170,7 +185,7 @@ public class AlertConnector {
     }
 
     public List<Long> getUsers() {
-        return Stream.of(tanks.keySet(), rdps.keySet(), mdps.keySet(), healers.keySet(), tentative.keySet(), notAvailable.keySet(), artillery.keySet()).flatMap(Set::stream).collect(Collectors.toList());
+        return Stream.of(tanks.keySet(), erdps.keySet(), prdps.keySet(), mdps.keySet(), healers.keySet(), tentative.keySet(), notAvailable.keySet(), artillery.keySet()).flatMap(Set::stream).collect(Collectors.toList());
     }
 
     public List<WarMessage> getWarMessages() {
