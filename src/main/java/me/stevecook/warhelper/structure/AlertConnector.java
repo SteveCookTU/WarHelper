@@ -160,7 +160,8 @@ public class AlertConnector {
         List<Long> ids = new ArrayList<>();
         for (WarMessage wm :
                 warMessages) {
-            ids.add(wm.getGuildID());
+            if(!ids.contains(wm.getGuildID()))
+                ids.add(wm.getGuildID());
         }
         return ids;
     }
