@@ -5,13 +5,13 @@ import me.stevecook.warhelper.structure.AlertConnector;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ public class ReactionListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.isFromGuild()) {
-            if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getMember())) {
+            if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getGuild().getIdLong(), e.getMember().getRoles())) {
                 String[] args = e.getMessage().getContentRaw().split(" ");
                 if (args.length == 4) {
                     if (args[0].equalsIgnoreCase("!waralert")) {
@@ -118,9 +118,21 @@ public class ReactionListener extends ListenerAdapter {
                         updateEmbeds(UUID.fromString(args[1]));
                         e.getMessage().delete().queue();
                     }
+                } else if (args.length == 3) {
+                    if (args[0].equalsIgnoreCase("!warperm")) {
+                        if(e.getMember().isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                            if(e.getGuild().getRolesByName(args[2].replace('_', ' '), true).size() > 1) {
+                                if(args[1].equalsIgnoreCase("add")) {
+                                    wh.addPermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
+                                } else if(args[1].equalsIgnoreCase("remove")) {
+                                    wh.removePermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
+                                }
+                            }
+                        }
+                        e.getMessage().delete().queue();
+                    }
                 }
             }
-
         }
     }
 
@@ -252,8 +264,8 @@ public class ReactionListener extends ListenerAdapter {
         }
     }
 
-    private boolean hasPermission(@NotNull Member m) {
-        return wh.hasPermission(m.getGuild().getName(), m.getRoles());
+    private boolean hasPermission(long guildID, List<Role> roles) {
+        return wh.hasPermission(guildID, roles);
     }
 
     private void fillEmbed(EmbedBuilder eb, UUID uuid) {

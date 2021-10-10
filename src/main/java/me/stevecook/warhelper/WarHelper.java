@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import me.stevecook.warhelper.listeners.ReactionListener;
+import me.stevecook.warhelper.listeners.SlashCommandListener;
 import me.stevecook.warhelper.structure.AlertConnector;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,7 +28,7 @@ public class WarHelper {
 
     private final List<AlertConnector> alertConnectors;
     private final List<AlertConnector> alertArchive;
-    private final Map<String, List<String>> permissions;
+    private final Map<Long, List<Long>> permissions;
 
     private final JDA jda;
     private final Gson gson;
@@ -39,7 +40,7 @@ public class WarHelper {
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .setActivity(Activity.competing("WAR"))
-                .addEventListeners(new ReactionListener(this))
+                .addEventListeners(new ReactionListener(this), new SlashCommandListener(this))
                 .build();
 
         GsonBuilder builder = new GsonBuilder();
@@ -94,8 +95,24 @@ public class WarHelper {
         return false;
     }
 
-    public boolean hasPermission(String guildName, List<Role> roles) {
-        return permissions.containsKey(guildName) && roles.stream().anyMatch(r -> permissions.get(guildName).contains(r.getName()));
+    public boolean hasPermission(long guildID, List<Role> roles) {
+        return permissions.containsKey(guildID) && roles.stream().anyMatch(r -> permissions.get(guildID).contains(r.getIdLong()));
+    }
+
+    public void addPermission(long guildID, long roleID) {
+        if(permissions.containsKey(guildID) && !permissions.get(guildID).contains(roleID)) {
+            permissions.get(guildID).add(roleID);
+        } else {
+            List<Long> temp = new ArrayList<>();
+            temp.add(roleID);
+            permissions.put(guildID, temp);
+        }
+    }
+
+    public void removePermission(long guildID, long roleID) {
+        if(permissions.containsKey(guildID)) {
+            permissions.get(guildID).remove(roleID);
+        }
     }
 
     public boolean isValidWarMessage(long guildID, long channelID, long messageID) {
@@ -161,9 +178,9 @@ public class WarHelper {
         return new ArrayList<>();
     }
 
-    public Map<String, List<String>> loadPermissions() throws IOException {
+    public Map<Long, List<Long>> loadPermissions() throws IOException {
         if(Files.exists(Path.of("permissions.json"))) {
-            return gson.fromJson(new String(Files.readAllBytes(Path.of("permissions.json"))), new TypeToken<Map<String, List<String>>>() {
+            return gson.fromJson(new String(Files.readAllBytes(Path.of("permissions.json"))), new TypeToken<Map<Long, List<Long>>>() {
             }.getType());
         }
         return new HashMap<>();
@@ -173,7 +190,7 @@ public class WarHelper {
         Type type = new TypeToken<List<AlertConnector>>() {
         }.getType();
 
-        Type type2 = new TypeToken<Map<String, List<String>>>(){}.getType();
+        Type type2 = new TypeToken<Map<Long, List<Long>>>(){}.getType();
 
         File f = new File("connectors.json");
         File f2 = new File("archive.json");
