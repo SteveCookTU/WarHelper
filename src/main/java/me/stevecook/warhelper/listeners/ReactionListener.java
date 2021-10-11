@@ -2,6 +2,7 @@ package me.stevecook.warhelper.listeners;
 
 import me.stevecook.warhelper.WarHelper;
 import me.stevecook.warhelper.structure.AlertConnector;
+import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -86,6 +87,7 @@ public class ReactionListener extends ListenerAdapter {
                                 eb.addField(":no_entry: Not Available :no_entry:", "", true);
                                 eb.addBlankField(false);
                             }
+                            eb.addField("NOTE", "Remember to use '/war register' to register your in-game data.", false);
                             eb.setFooter(uuid.toString());
                             e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
                                 for(String s : REACTIONS) {
@@ -301,7 +303,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getTanks().get(id) == l) {
                         temp = jda.getGuildById(ac.getTanks().get(id));
                         assert temp != null;
-                        tanks.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        tanks.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -313,7 +329,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getERDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getERDPS().get(id));
                         assert temp != null;
-                        erdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        erdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -325,7 +355,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getPRDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getPRDPS().get(id));
                         assert temp != null;
-                        prdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        prdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -337,7 +381,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getMDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getMDPS().get(id));
                         assert temp != null;
-                        mdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        mdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -349,7 +407,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getHealers().get(id) == l) {
                         temp = jda.getGuildById(ac.getHealers().get(id));
                         assert temp != null;
-                        healers.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        healers.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -361,7 +433,12 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getTentative().get(id) == l) {
                         temp = jda.getGuildById(ac.getTentative().get(id));
                         assert temp != null;
-                        tentative.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        tentative.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("\n");
                     }
                 }
             }
@@ -373,7 +450,12 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getNotAvailable().get(id) == l) {
                         temp = jda.getGuildById(ac.getNotAvailable().get(id));
                         assert temp != null;
-                        notAvailable.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        notAvailable.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("\n");
                     }
                 }
             }
@@ -385,7 +467,21 @@ public class ReactionListener extends ListenerAdapter {
                     if (ac.getArtillery().get(id) == l) {
                         temp = jda.getGuildById(ac.getArtillery().get(id));
                         assert temp != null;
-                        artillery.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        artillery.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -432,6 +528,8 @@ public class ReactionListener extends ListenerAdapter {
                     eb.addField(original.getFields().get(2));
 
                     fillEmbed(eb, uuid);
+
+                    eb.addField(original.getFields().get(original.getFields().size() - 1));
 
                     eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
 

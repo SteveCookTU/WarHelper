@@ -55,7 +55,7 @@ public class SlashCommandListener implements EventListener {
                                     try {
                                         e.deferReply(true).queue();
                                         wh.saveData();
-                                        e.reply("Data successfully saved").queue();
+                                        e.reply("Data saved successfully").queue();
                                     } catch (IOException ex) {
                                         ex.printStackTrace();
                                         e.reply("There was an issue saving data. Please contact the bot developer(s).").setEphemeral(true).queue();
@@ -88,7 +88,7 @@ public class SlashCommandListener implements EventListener {
                                 if(Objects.requireNonNull(e.getMember()).isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR))
                                     editPerm(e);
                                 else
-                                    e.reply("You do not have permission to use this command").setEphemeral(true).queue();
+                                    e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
                             else
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
@@ -188,8 +188,8 @@ public class SlashCommandListener implements EventListener {
                 eb.addField(":no_entry: Not Available :no_entry:", "", true);
                 eb.addBlankField(false);
             }
+            eb.addField("NOTE", "Remember to use '/war register' to register your in-game data.", false);
             eb.setFooter(uuid.toString());
-
             e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue( message -> {
                 for(String s : REACTIONS) {
                     message.addReaction(s).queue();
@@ -264,6 +264,8 @@ public class SlashCommandListener implements EventListener {
 
                     fillEmbed(eb, uuid);
 
+                    eb.addField(original.getFields().get(original.getFields().size() - 1));
+
                     eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
 
                     message.editMessageEmbeds(eb.build()).queue();
@@ -312,7 +314,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getTanks().get(id) == l) {
                         temp = jda.getGuildById(ac.getTanks().get(id));
                         assert temp != null;
-                        tanks.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        tanks.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -324,7 +340,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getERDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getERDPS().get(id));
                         assert temp != null;
-                        erdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        erdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -336,7 +366,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getPRDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getPRDPS().get(id));
                         assert temp != null;
-                        prdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        prdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -348,7 +392,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getMDPS().get(id) == l) {
                         temp = jda.getGuildById(ac.getMDPS().get(id));
                         assert temp != null;
-                        mdps.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        mdps.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -360,7 +418,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getHealers().get(id) == l) {
                         temp = jda.getGuildById(ac.getHealers().get(id));
                         assert temp != null;
-                        healers.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        healers.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
@@ -372,7 +444,12 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getTentative().get(id) == l) {
                         temp = jda.getGuildById(ac.getTentative().get(id));
                         assert temp != null;
-                        tentative.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        tentative.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("\n");
                     }
                 }
             }
@@ -384,7 +461,12 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getNotAvailable().get(id) == l) {
                         temp = jda.getGuildById(ac.getNotAvailable().get(id));
                         assert temp != null;
-                        notAvailable.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        notAvailable.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("\n");
                     }
                 }
             }
@@ -396,7 +478,21 @@ public class SlashCommandListener implements EventListener {
                     if (ac.getArtillery().get(id) == l) {
                         temp = jda.getGuildById(ac.getArtillery().get(id));
                         assert temp != null;
-                        artillery.append(" - ").append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName()).append("\n");
+                        UserData userData = wh.getUserData(id);
+                        artillery.append("`")
+                                .append(String.format("%2d", userData.getLevel()))
+                                .append("`")
+                                .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
+                                .append("`")
+                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(",")
+                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(" ")
+                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append("`")
+                                .append("\n");
                     }
                 }
             }
