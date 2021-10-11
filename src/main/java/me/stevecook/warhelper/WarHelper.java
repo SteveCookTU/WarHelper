@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WarHelper {
 
@@ -174,6 +175,10 @@ public class WarHelper {
                 }
             }
         }
+    }
+
+    public List<AlertConnector> getAlertConnectorsWithUserID(long userID) {
+        return alertConnectors.stream().filter(ac -> ac.getUsers().contains(userID)).collect(Collectors.toList());
     }
 
     public JDA getJda() {

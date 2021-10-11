@@ -107,6 +107,10 @@ public class SlashCommandListener implements EventListener {
                             userData.setMainHand(Objects.requireNonNull(e.getOption("weapon")).getAsString());
                             userData.setMainHandLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
                             e.getHook().sendMessage("Main hand set to " + userData.getMainHand() + " level " + userData.getMainHandLevel()).queue();
+                            for (AlertConnector ac :
+                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
+                                updateEmbeds(ac.getCode());
+                            }
                         }
                         case "secondary" -> {
                             if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
@@ -117,6 +121,10 @@ public class SlashCommandListener implements EventListener {
                             userData.setSecondary(Objects.requireNonNull(e.getOption("weapon")).getAsString());
                             userData.setSecondaryLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
                             e.getHook().sendMessage("Secondary set to " + userData.getSecondary() + " level " + userData.getSecondaryLevel()).queue();
+                            for (AlertConnector ac :
+                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
+                                updateEmbeds(ac.getCode());
+                            }
                         }
                         case "level" -> {
                             if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 1 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 60) {
@@ -126,6 +134,10 @@ public class SlashCommandListener implements EventListener {
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
                             userData.setLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
                             e.getHook().sendMessage("Level set to " + userData.getLevel()).queue();
+                            for (AlertConnector ac :
+                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
+                                updateEmbeds(ac.getCode());
+                            }
                         }
                     }
                 }
