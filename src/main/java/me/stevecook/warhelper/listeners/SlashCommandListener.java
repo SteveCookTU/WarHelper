@@ -53,7 +53,9 @@ public class SlashCommandListener implements EventListener {
                             if(e.isFromGuild())
                                 if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                                     try {
+                                        e.deferReply(true).queue();
                                         wh.saveData();
+                                        e.reply("Data successfully saved").queue();
                                     } catch (IOException ex) {
                                         ex.printStackTrace();
                                         e.reply("There was an issue saving data. Please contact the bot developer(s).").setEphemeral(true).queue();
