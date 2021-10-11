@@ -200,7 +200,7 @@ public class SlashCommandListener implements EventListener {
                 eb.addField(":no_entry: Not Available :no_entry:", "", true);
                 eb.addBlankField(false);
             }
-            eb.addField("NOTE", "Remember to use '/war register' to register your in-game data.", false);
+            eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
             eb.setFooter(uuid.toString());
             e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue( message -> {
                 for(String s : REACTIONS) {
@@ -328,15 +328,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         tanks.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")
@@ -354,15 +354,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         erdps.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")
@@ -380,15 +380,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         prdps.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")
@@ -406,15 +406,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         mdps.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")
@@ -432,15 +432,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         healers.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")
@@ -458,7 +458,7 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         tentative.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("\n");
@@ -475,7 +475,7 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         notAvailable.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("\n");
@@ -492,15 +492,15 @@ public class SlashCommandListener implements EventListener {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         artillery.append("`")
-                                .append(String.format("%2d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getLevel()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
-                                .append(String.format("%2d", userData.getMainHandLevel()))
+                                .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
                                 .append(",")
-                                .append(String.format("%2d", userData.getSecondaryLevel()))
+                                .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
                                 .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
                                 .append("`")

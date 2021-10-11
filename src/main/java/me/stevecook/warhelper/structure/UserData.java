@@ -85,7 +85,7 @@ public class UserData {
             case "fire staff" -> {
                 return "FS";
             }
-            case "life staff" -> {
+            case "ice staff", "life staff" -> {
                 return "LS";
             }
             case "ice gauntlet" -> {
