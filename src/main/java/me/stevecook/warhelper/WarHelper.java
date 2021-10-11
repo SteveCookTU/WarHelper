@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import me.stevecook.warhelper.listeners.ReactionListener;
 import me.stevecook.warhelper.listeners.SlashCommandListener;
 import me.stevecook.warhelper.structure.AlertConnector;
+import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -29,6 +30,7 @@ public class WarHelper {
     private final List<AlertConnector> alertConnectors;
     private final List<AlertConnector> alertArchive;
     private final Map<Long, List<Long>> permissions;
+    private final TreeMap<Long, UserData> userDataMap;
 
     private final JDA jda;
     private final Gson gson;
@@ -50,6 +52,7 @@ public class WarHelper {
         alertConnectors = loadActiveAlerts();
         alertArchive = loadArchivedAlerts();
         permissions = loadPermissions();
+        userDataMap = loadUserData();
     }
 
     public static void main(String[] args) throws LoginException, IOException {
@@ -93,6 +96,21 @@ public class WarHelper {
                 return true;
         }
         return false;
+    }
+
+    public UserData addUserData(long userID) {
+        if(!userDataMap.containsKey(userID)) {
+            UserData newData = new UserData();
+            userDataMap.put(userID, newData);
+            return newData;
+        }
+        return null;
+    }
+
+    public UserData getUserData(long userID) {
+        if(userDataMap.containsKey(userID))
+            return userDataMap.get(userID);
+        return addUserData(userID);
     }
 
     public boolean hasPermission(long guildID, List<Role> roles) {
@@ -186,18 +204,30 @@ public class WarHelper {
         return new HashMap<>();
     }
 
+    public TreeMap<Long, UserData> loadUserData() throws IOException {
+        if(Files.exists(Path.of("userdata.json"))) {
+            return gson.fromJson(new String(Files.readAllBytes(Path.of("userdata.json"))), new TypeToken<TreeMap<Long, UserData>>() {
+            }.getType());
+        }
+        return new TreeMap<>();
+    }
+
     public void saveData() throws IOException {
         Type type = new TypeToken<List<AlertConnector>>() {
         }.getType();
 
         Type type2 = new TypeToken<Map<Long, List<Long>>>(){}.getType();
 
+        Type type3 = new TypeToken<TreeMap<Long, UserData>>(){}.getType();
+
         File f = new File("connectors.json");
         File f2 = new File("archive.json");
         File f3 = new File("permissions.json");
+        File f4 = new File("userdata.json");
         boolean success = f.createNewFile();
         success = f2.createNewFile();
         success = f3.createNewFile();
+        success = f4.createNewFile();
 
         FileWriter fr = new FileWriter(f);
         fr.write(gson.toJson(alertConnectors, type));
@@ -211,6 +241,11 @@ public class WarHelper {
 
         fr = new FileWriter(f3);
         fr.write(gson.toJson(permissions, type2));
+        fr.flush();
+        fr.close();
+
+        fr = new FileWriter(f4);
+        fr.write(gson.toJson(userDataMap, type3));
         fr.flush();
         fr.close();
     }

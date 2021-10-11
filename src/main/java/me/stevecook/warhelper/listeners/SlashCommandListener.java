@@ -2,6 +2,7 @@ package me.stevecook.warhelper.listeners;
 
 import me.stevecook.warhelper.WarHelper;
 import me.stevecook.warhelper.structure.AlertConnector;
+import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 public class SlashCommandListener implements EventListener {
 
-    private WarHelper wh;
+    private final WarHelper wh;
 
     private static final String[] REACTIONS = {"\uD83D\uDEE1", "\uD83D\uDDE1", "\uD83C\uDFF9", "\uD83E\uDE84", "❤", "\uD83D\uDCA5", "❓", "⛔"};
 
@@ -49,12 +50,18 @@ public class SlashCommandListener implements EventListener {
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "save" -> {
-                            try {
-                                wh.saveData();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                                e.reply("There was an issue saving data. Please contact the bot developers.").setEphemeral(true).queue();
-                            }
+                            if(e.isFromGuild())
+                                if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                                    try {
+                                        wh.saveData();
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                        e.reply("There was an issue saving data. Please contact the bot developer(s).").setEphemeral(true).queue();
+                                    }
+                                else
+                                    e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
+                            else
+                                e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "archive" -> {
                             if(e.isFromGuild())
@@ -85,6 +92,41 @@ public class SlashCommandListener implements EventListener {
                         }
                     }
                 }
+            } else if(e.getName().equalsIgnoreCase("register")) {
+                if(e.getSubcommandName() != null) {
+                    e.deferReply(true).queue();
+                    switch(e.getSubcommandName()) {
+                        case "mainhand" -> {
+                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
+                                e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            userData.setMainHand(Objects.requireNonNull(e.getOption("weapon")).getAsString());
+                            userData.setMainHandLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            e.getHook().sendMessage("Main hand set to " + userData.getMainHand() + " level " + userData.getMainHandLevel()).queue();
+                        }
+                        case "secondary" -> {
+                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
+                                e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            userData.setSecondary(Objects.requireNonNull(e.getOption("weapon")).getAsString());
+                            userData.setSecondaryLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            e.getHook().sendMessage("Secondary set to " + userData.getSecondary() + " level " + userData.getSecondaryLevel()).queue();
+                        }
+                        case "level" -> {
+                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 1 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 60) {
+                                e.getHook().sendMessage("Please enter a level from 1 to 60 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            userData.setLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            e.getHook().sendMessage("Level set to " + userData.getLevel()).queue();
+                        }
+                    }
+                }
             }
         }
     }
@@ -104,7 +146,7 @@ public class SlashCommandListener implements EventListener {
             e.reply("The date or time entered was invalid. Please use the formats MM/dd/yyyy and hh:mma respectively. Ex: 02/10/2022 and 12:30pm").setEphemeral(true).queue();
             return;
         }
-        e.deferReply(false).queue();
+        e.reply("Generating war message.").setEphemeral(true).queue();
         String territory = Objects.requireNonNull(e.getOption("territory")).getAsString();
 
         UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + territory.toLowerCase()).getBytes());
@@ -146,7 +188,7 @@ public class SlashCommandListener implements EventListener {
             }
             eb.setFooter(uuid.toString());
 
-            e.getHook().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue( message -> {
+            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue( message -> {
                 for(String s : REACTIONS) {
                     message.addReaction(s).queue();
                 }
