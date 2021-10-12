@@ -52,14 +52,7 @@ public class ReactionListener extends ListenerAdapter {
                         if (!wh.channelContainsWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), uuid)) {
                             EmbedBuilder eb = new EmbedBuilder();
 
-                            StringBuilder builder = new StringBuilder();
-                            for (int i = 0; i < args[1].length(); i++) {
-                                if (args[1].charAt(i) != '_')
-                                    builder.append(":regional_indicator_").append(args[1].substring(i, i + 1).toLowerCase()).append(":").append(" ");
-                                else
-                                    builder.append("\t");
-                            }
-                            eb.setTitle(builder.toString().trim());
+                            eb.setTitle(Util.convertToEmoji(args[1]));
 
                             eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
                             eb.addBlankField(true);

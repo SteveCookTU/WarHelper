@@ -16,6 +16,7 @@ import java.util.UUID;
 public class Util {
 
     public static final String[] REACTIONS = {"\uD83D\uDEE1", "\uD83D\uDDE1", "\uD83C\uDFF9", "\uD83E\uDE84", "❤", "\uD83D\uDCA5", "❓", "⛔"};
+    public static final String[] EMOJI_LETTERS = {"\uD83C\uDDE6", "\uD83C\uDDE7", "\uD83C\uDDE8", "\uD83C\uDDE9", "\uD83C\uDDEA", "\uD83C\uDDEB", "\uD83C\uDDEC", "\uD83C\uDDED", "\uD83C\uDDEE", "\uD83C\uDDEF", "\uD83C\uDDF0", "\uD83C\uDDF1", "\uD83C\uDDF2", "\uD83C\uDDF3", "\uD83C\uDDF4", "\uD83C\uDDF5", "\uD83C\uDDF6", "\uD83C\uDDF7", "\uD83C\uDDF8", "\uD83C\uDDF9", "\uD83C\uDDFA", "\uD83C\uDDFB", "\uD83C\uDDFC", "\uD83C\uDDFD", "\uD83C\uDDFE", "\uD83C\uDDFF"};
 
     public static void updateEmbeds(UUID uuid, WarHelper wh) {
         JDA jda = wh.getJda();
@@ -293,4 +294,14 @@ public class Util {
         eb.addBlankField(false);
     }
 
+    public static String convertToEmoji(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != '_')
+                sb.append(EMOJI_LETTERS[s.toUpperCase().charAt(i) - 97]);
+            else
+                sb.append("\t");
+        }
+        return sb.toString();
+    }
 }
