@@ -298,7 +298,7 @@ public class Util {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) != '_')
-                sb.append(EMOJI_LETTERS[s.toLowerCase().charAt(i) - 97]);
+                sb.append(EMOJI_LETTERS[s.toLowerCase().charAt(i) - 97]).append(" ");
             else
                 sb.append("\t");
         }
