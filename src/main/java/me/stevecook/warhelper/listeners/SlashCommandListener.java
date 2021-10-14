@@ -99,6 +99,7 @@ public class SlashCommandListener implements EventListener {
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
                             userData.setMainHand(Objects.requireNonNull(e.getOption("weapon")).getAsString());
                             userData.setMainHandLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
                             e.getHook().sendMessage("Main hand set to " + userData.getMainHand() + " level " + userData.getMainHandLevel()).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
@@ -113,6 +114,7 @@ public class SlashCommandListener implements EventListener {
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
                             userData.setSecondary(Objects.requireNonNull(e.getOption("weapon")).getAsString());
                             userData.setSecondaryLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
                             e.getHook().sendMessage("Secondary set to " + userData.getSecondary() + " level " + userData.getSecondaryLevel()).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
@@ -126,6 +128,7 @@ public class SlashCommandListener implements EventListener {
                             }
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
                             userData.setLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
                             e.getHook().sendMessage("Level set to " + userData.getLevel()).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
@@ -203,7 +206,7 @@ public class SlashCommandListener implements EventListener {
     }
 
     private void archiveAlert(SlashCommandEvent e) {
-        e.deferReply(true).queue();
+        e.deferReply().setEphemeral(true).queue();
         if(e.getOption("id") == null) {
             return;
         }
@@ -213,7 +216,7 @@ public class SlashCommandListener implements EventListener {
     }
 
     private void refreshEmbeds(SlashCommandEvent e) {
-        e.deferReply(true).queue();
+        e.deferReply().setEphemeral(true).queue();
         if(e.getOption("id") == null) {
             return;
         }

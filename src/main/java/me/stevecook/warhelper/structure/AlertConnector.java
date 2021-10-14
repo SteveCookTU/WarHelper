@@ -30,6 +30,19 @@ public class AlertConnector {
         warMessages = new ArrayList<>();
     }
 
+    public AlertConnector(UUID uuid) {
+        code = uuid;
+        tanks = new HashMap<>();
+        erdps = new HashMap<>();
+        prdps = new HashMap<>();
+        mdps = new HashMap<>();
+        healers = new HashMap<>();
+        tentative = new HashMap<>();
+        notAvailable = new HashMap<>();
+        artillery = new HashMap<>();
+        warMessages = new ArrayList<>();
+    }
+
     public void addTank(long userID, long guildID) {
         if (!getUsers().contains(userID))
             tanks.put(userID, guildID);
@@ -197,4 +210,11 @@ public class AlertConnector {
         return code;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof AlertConnector ac) {
+            return ac.code.toString().equalsIgnoreCase(this.code.toString());
+        }
+        return false;
+    }
 }

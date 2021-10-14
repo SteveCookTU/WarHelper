@@ -189,6 +189,7 @@ public class ReactionListener extends ListenerAdapter {
                             ac.addNotAvailable(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                     }
+                    wh.updateAlertConnector(ac);
                     Util.updateEmbeds(uuid, wh);
                 });
             }
@@ -251,6 +252,7 @@ public class ReactionListener extends ListenerAdapter {
                             ac.removeNotAvailable(e.getUserIdLong(), e.getGuild().getIdLong());
                         }
                     }
+                    wh.updateAlertConnector(ac);
                     Util.updateEmbeds(uuid, wh);
                 });
             }
