@@ -29,13 +29,13 @@ public class SlashCommandListener implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent genericEvent) {
-        if(genericEvent instanceof SlashCommandEvent e) {
-            if(e.getName().equalsIgnoreCase("war")) {
-                if(e.getSubcommandName() != null) {
-                    switch(e.getSubcommandName()) {
+        if (genericEvent instanceof SlashCommandEvent e) {
+            if (e.getName().equalsIgnoreCase("war")) {
+                if (e.getSubcommandName() != null) {
+                    switch (e.getSubcommandName()) {
                         case "alert" -> {
-                            if(e.isFromGuild())
-                                if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                            if (e.isFromGuild())
+                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                                     createAlert(e);
                                 else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
@@ -43,8 +43,8 @@ public class SlashCommandListener implements EventListener {
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "save" -> {
-                            if(e.isFromGuild())
-                                if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                            if (e.isFromGuild())
+                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                                     try {
                                         e.deferReply(true).queue();
                                         wh.saveData();
@@ -59,8 +59,8 @@ public class SlashCommandListener implements EventListener {
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "archive" -> {
-                            if(e.isFromGuild())
-                                if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                            if (e.isFromGuild())
+                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                                     archiveAlert(e);
                                 else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
@@ -68,8 +68,8 @@ public class SlashCommandListener implements EventListener {
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "refresh" -> {
-                            if(e.isFromGuild())
-                                if(wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                            if (e.isFromGuild())
+                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                                     refreshEmbeds(e);
                                 else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
@@ -77,8 +77,8 @@ public class SlashCommandListener implements EventListener {
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                         }
                         case "perm" -> {
-                            if(e.isFromGuild())
-                                if(Objects.requireNonNull(e.getMember()).isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR))
+                            if (e.isFromGuild())
+                                if (Objects.requireNonNull(e.getMember()).isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR))
                                     editPerm(e);
                                 else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
@@ -87,12 +87,12 @@ public class SlashCommandListener implements EventListener {
                         }
                     }
                 }
-            } else if(e.getName().equalsIgnoreCase("register")) {
-                if(e.getSubcommandName() != null) {
+            } else if (e.getName().equalsIgnoreCase("register")) {
+                if (e.getSubcommandName() != null) {
                     e.deferReply(true).queue();
-                    switch(e.getSubcommandName()) {
+                    switch (e.getSubcommandName()) {
                         case "mainhand" -> {
-                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
+                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
                                 e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
                                 return;
                             }
@@ -107,7 +107,7 @@ public class SlashCommandListener implements EventListener {
                             }
                         }
                         case "secondary" -> {
-                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
+                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
                                 e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
                                 return;
                             }
@@ -122,7 +122,7 @@ public class SlashCommandListener implements EventListener {
                             }
                         }
                         case "level" -> {
-                            if(Objects.requireNonNull(e.getOption("level")).getAsDouble() < 1 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 60) {
+                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 1 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 60) {
                                 e.getHook().sendMessage("Please enter a level from 1 to 60 (inclusive).").queue();
                                 return;
                             }
@@ -144,7 +144,7 @@ public class SlashCommandListener implements EventListener {
     private void createAlert(SlashCommandEvent e) {
         LocalDate date;
         LocalTime time;
-        if(e.getOption("date") == null || e.getOption("time") == null || e.getOption("territory") == null) {
+        if (e.getOption("date") == null || e.getOption("time") == null || e.getOption("territory") == null || e.getOption("server") == null || e.getOption("faction") == null) {
             return;
         }
         try {
@@ -158,8 +158,10 @@ public class SlashCommandListener implements EventListener {
         }
         e.reply("Generating war message.").setEphemeral(true).queue();
         String territory = Objects.requireNonNull(e.getOption("territory")).getAsString();
+        String server = Objects.requireNonNull(e.getOption("server")).getAsString();
+        String faction = Objects.requireNonNull(e.getOption("faction")).getAsString();
 
-        UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + territory.toLowerCase()).getBytes());
+        UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + server.toLowerCase() + faction.toLowerCase() + territory.toLowerCase()).getBytes());
         if (!wh.channelContainsWarMessage(Objects.requireNonNull(e.getGuild()).getIdLong(), e.getChannel().getIdLong(), uuid)) {
             EmbedBuilder eb = new EmbedBuilder();
 
@@ -191,8 +193,8 @@ public class SlashCommandListener implements EventListener {
             }
             eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
             eb.setFooter(uuid.toString());
-            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue( message -> {
-                for(String s : Util.REACTIONS) {
+            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
+                for (String s : Util.REACTIONS) {
                     message.addReaction(s).queue();
                 }
                 wh.addWarMessage(message.getGuild().getIdLong(),
@@ -200,14 +202,22 @@ public class SlashCommandListener implements EventListener {
                         message.getIdLong(),
                         date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
                                 time.format(DateTimeFormatter.ofPattern("hh:mma")) +
-                                territory.toLowerCase());
+                                server.toLowerCase() +
+                                faction.toLowerCase() +
+                                territory.toLowerCase(),
+                        date.format(DateTimeFormatter.ofPattern("EEE d. MMM")),
+                        time.format(DateTimeFormatter.ofPattern("hh:mma")),
+                        server,
+                        faction,
+                        territory
+                );
             }));
         }
     }
 
     private void archiveAlert(SlashCommandEvent e) {
         e.deferReply().setEphemeral(true).queue();
-        if(e.getOption("id") == null) {
+        if (e.getOption("id") == null) {
             return;
         }
         String sUUID = Objects.requireNonNull(e.getOption("id")).getAsString();
@@ -217,7 +227,7 @@ public class SlashCommandListener implements EventListener {
 
     private void refreshEmbeds(SlashCommandEvent e) {
         e.deferReply().setEphemeral(true).queue();
-        if(e.getOption("id") == null) {
+        if (e.getOption("id") == null) {
             return;
         }
         String sUUID = Objects.requireNonNull(e.getOption("id")).getAsString();
@@ -229,7 +239,7 @@ public class SlashCommandListener implements EventListener {
         e.deferReply(true).queue();
         String sOption = Objects.requireNonNull(e.getOption("add_remove")).getAsString();
         long roleID = Objects.requireNonNull(e.getOption("role")).getAsRole().getIdLong();
-        switch(sOption) {
+        switch (sOption) {
             case "add" -> {
                 wh.addPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), roleID);
                 e.getHook().sendMessage("The bot admin permission has been added to the specified role.").queue();

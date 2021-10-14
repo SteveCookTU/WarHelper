@@ -7,6 +7,11 @@ import java.util.stream.Stream;
 public class AlertConnector {
 
     private final UUID code;
+    private final String server;
+    private final String faction;
+    private final String territory;
+    private final String date;
+    private final String time;
     private final Map<Long, Long> tanks;
     private final Map<Long, Long> erdps;
     private final Map<Long, Long> prdps;
@@ -17,21 +22,13 @@ public class AlertConnector {
     private final Map<Long, Long> artillery;
     private final List<WarMessage> warMessages;
 
-    public AlertConnector(String toEncode) {
+    public AlertConnector(String toEncode, String date, String time, String server, String faction, String territory) {
         code = UUID.nameUUIDFromBytes(toEncode.getBytes());
-        tanks = new HashMap<>();
-        erdps = new HashMap<>();
-        prdps = new HashMap<>();
-        mdps = new HashMap<>();
-        healers = new HashMap<>();
-        tentative = new HashMap<>();
-        notAvailable = new HashMap<>();
-        artillery = new HashMap<>();
-        warMessages = new ArrayList<>();
-    }
-
-    public AlertConnector(UUID uuid) {
-        code = uuid;
+        this.date = date;
+        this.time = time;
+        this.server = server;
+        this.faction = faction;
+        this.territory = territory;
         tanks = new HashMap<>();
         erdps = new HashMap<>();
         prdps = new HashMap<>();
@@ -208,6 +205,26 @@ public class AlertConnector {
 
     public UUID getCode() {
         return code;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public String getFaction() {
+        return faction;
+    }
+
+    public String getTerritory() {
+        return territory;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
     }
 
     @Override

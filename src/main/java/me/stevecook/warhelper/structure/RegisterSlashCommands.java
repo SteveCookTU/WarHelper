@@ -12,7 +12,12 @@ public class RegisterSlashCommands {
     public static void register(JDA jda) {
         jda.upsertCommand(new CommandData("war", "Base command for war helper")
                         .addSubcommands(new SubcommandData("alert", "Creates a war alert with the designated parameters. (Bot admin)")
-                                        .addOptions(new OptionData(OptionType.STRING, "territory", "Designated territory for the war", true)
+                                        .addOptions(new OptionData(OptionType.STRING, "server", "Designated server for the war", true),
+                                                new OptionData(OptionType.STRING, "faction", "Designated faction for the war", true)
+                                                        .addChoices(new Command.Choice("Covenant", "covenant"),
+                                                                new Command.Choice("Marauders", "marauders"),
+                                                                new Command.Choice("Syndicate", "syndicate")),
+                                                new OptionData(OptionType.STRING, "territory", "Designated territory for the war", true)
                                                         .addChoices(new Command.Choice("Brightwood", "brightwood"),
                                                                 new Command.Choice("Cutlass Keys", "cutlass_keys"),
                                                                 new Command.Choice("Ebonscale Reach", "ebonscale_reach"),

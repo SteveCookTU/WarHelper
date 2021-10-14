@@ -36,23 +36,23 @@ public class ReactionListener extends ListenerAdapter {
         if (e.isFromGuild()) {
             if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getGuild().getIdLong(), e.getMember().getRoles())) {
                 String[] args = e.getMessage().getContentRaw().split(" ");
-                if (args.length == 4) {
+                if (args.length == 6) {
                     if (args[0].equalsIgnoreCase("!waralert")) {
                         LocalDate date;
                         LocalTime time;
                         try {
-                            date = LocalDate.parse(args[2], DateTimeFormatter.ofPattern("M/d/yyyy"));
-                            time = LocalTime.parse(args[3].substring(0, args[3].length() - 2) + args[3].substring(args[3].length() - 2).toUpperCase(), DateTimeFormatter.ofPattern("h:mma"));
+                            date = LocalDate.parse(args[4], DateTimeFormatter.ofPattern("M/d/yyyy"));
+                            time = LocalTime.parse(args[5].substring(0, args[5].length() - 2) + args[5].substring(args[5].length() - 2).toUpperCase(), DateTimeFormatter.ofPattern("h:mma"));
                         } catch (DateTimeParseException ex) {
                             e.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage("The date or time entered was invalid. Please use the formats MM/dd/yyyy and hh:mma respectively. Ex: 02/10/2022 and 12:30pm").queue());
                             return;
                         }
 
-                        UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + args[1].toLowerCase()).getBytes());
+                        UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + args[1].toLowerCase() + args[2].toLowerCase() + args[3].toLowerCase()).getBytes());
                         if (!wh.channelContainsWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), uuid)) {
                             EmbedBuilder eb = new EmbedBuilder();
 
-                            eb.setTitle(Util.convertToEmoji(args[1]));
+                            eb.setTitle(Util.convertToEmoji(args[2]));
 
                             eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
                             eb.addBlankField(true);
@@ -81,7 +81,7 @@ public class ReactionListener extends ListenerAdapter {
                             eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
                             eb.setFooter(uuid.toString());
                             e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
-                                for(String s : REACTIONS) {
+                                for (String s : REACTIONS) {
                                     message.addReaction(s).queue();
                                 }
                                 wh.addWarMessage(message.getGuild().getIdLong(),
@@ -89,7 +89,14 @@ public class ReactionListener extends ListenerAdapter {
                                         message.getIdLong(),
                                         date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
                                                 time.format(DateTimeFormatter.ofPattern("hh:mma")) +
-                                                args[1].toLowerCase());
+                                                args[1].toLowerCase() +
+                                                args[2].toLowerCase() +
+                                                args[3].toLowerCase(),
+                                        date.format(DateTimeFormatter.ofPattern("EEE d. MMM")),
+                                        time.format(DateTimeFormatter.ofPattern("hh:mma")),
+                                        args[1].toLowerCase(),
+                                        args[2].toLowerCase(),
+                                        args[3].toLowerCase());
                             }));
                         }
                         e.getMessage().delete().queue();
@@ -107,17 +114,17 @@ public class ReactionListener extends ListenerAdapter {
                     if (args[0].equalsIgnoreCase("!wararchive")) {
                         wh.archiveAlertConnector(UUID.fromString(args[1]));
                         e.getMessage().delete().queue();
-                    } else if(args[0].equalsIgnoreCase("!warrefresh")) {
+                    } else if (args[0].equalsIgnoreCase("!warrefresh")) {
                         Util.updateEmbeds(UUID.fromString(args[1]), wh);
                         e.getMessage().delete().queue();
                     }
                 } else if (args.length == 3) {
                     if (args[0].equalsIgnoreCase("!warperm")) {
-                        if(e.getMember().isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                            if(e.getGuild().getRolesByName(args[2].replace('_', ' '), true).size() > 1) {
-                                if(args[1].equalsIgnoreCase("add")) {
+                        if (e.getMember().isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                            if (e.getGuild().getRolesByName(args[2].replace('_', ' '), true).size() > 1) {
+                                if (args[1].equalsIgnoreCase("add")) {
                                     wh.addPermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
-                                } else if(args[1].equalsIgnoreCase("remove")) {
+                                } else if (args[1].equalsIgnoreCase("remove")) {
                                     wh.removePermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
                                 }
                             }

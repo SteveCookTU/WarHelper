@@ -9,6 +9,7 @@ import com.mongodb.client.model.*;
 import me.stevecook.warhelper.listeners.ReactionListener;
 import me.stevecook.warhelper.listeners.SlashCommandListener;
 import me.stevecook.warhelper.structure.AlertConnector;
+import me.stevecook.warhelper.structure.RegisterSlashCommands;
 import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -85,10 +86,10 @@ public class WarHelper {
         return null;
     }
 
-    public void addWarMessage(long guildID, long channelID, long messageID, String toEncode) {
+    public void addWarMessage(long guildID, long channelID, long messageID, String toEncode, String date, String time, String server, String faction, String territory) {
         AlertConnector ac = getAlertConnector(UUID.nameUUIDFromBytes(toEncode.getBytes()));
         if (ac == null) {
-            ac = createAlertConnectors(toEncode);
+            ac = createAlertConnectors(toEncode, date, time, server, faction, territory);
         }
         ac.addWarMessage(guildID, channelID, messageID);
         updateAlertConnector(ac);
@@ -236,8 +237,8 @@ public class WarHelper {
         return false;
     }
 
-    public AlertConnector createAlertConnectors(String toEncode) {
-        AlertConnector ac = new AlertConnector(toEncode);
+    public AlertConnector createAlertConnectors(String toEncode, String date, String time, String server, String faction, String territory) {
+        AlertConnector ac = new AlertConnector(toEncode, date, time, server, faction, territory);
         if(mongoClient != null) {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
             Document result = acCol.find(Filters.eq("code", UUID.nameUUIDFromBytes(toEncode.getBytes()).toString())).projection(Projections.excludeId()).first();
