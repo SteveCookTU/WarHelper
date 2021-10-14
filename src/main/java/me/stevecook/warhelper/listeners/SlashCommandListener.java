@@ -207,9 +207,9 @@ public class SlashCommandListener implements EventListener {
                                 territory.toLowerCase(),
                         date.format(DateTimeFormatter.ofPattern("EEE d. MMM")),
                         time.format(DateTimeFormatter.ofPattern("hh:mma")),
-                        server,
-                        faction,
-                        territory
+                        server.toLowerCase(),
+                        faction.toLowerCase(),
+                        territory.toUpperCase()
                 );
             }));
         }
