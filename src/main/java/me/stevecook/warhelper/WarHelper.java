@@ -56,7 +56,7 @@ public class WarHelper {
             mongoClient = null;
         }
 
-        jda = JDABuilder.createDefault(token).setChunkingFilter(ChunkingFilter.ALL)
+        jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .setActivity(Activity.competing("WAR"))
