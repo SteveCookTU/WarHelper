@@ -279,38 +279,26 @@ public class WarHelper {
     }
 
     public void archiveAlertConnector(UUID uuid) {
-        if(mongoClient != null) {
-            MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
-            Document result = acCol.find(Filters.eq("code", uuid.toString())).projection(Projections.excludeId()).first();
-            if(result != null) {
-                acCol.deleteOne(result);
-                MongoCollection<Document> aaCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertArchive");
-                aaCol.insertOne(result);
-            }
-        } else {
-            AlertConnector ac = getAlertConnector(uuid);
-            alertConnectors.remove(ac);
-            alertArchive.add(ac);
-            for (WarMessage wm :
-                    ac.getWarMessages()) {
-                Guild g = jda.getGuildById(wm.getGuildID());
-                if (g != null) {
-                    TextChannel tc = g.getTextChannelById(wm.getChannelID());
-                    if (tc != null) {
-                        tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
-                            MessageEmbed mb = message.getEmbeds().get(0);
-                            if (mb != null) {
-                                EmbedBuilder eb = new EmbedBuilder();
-                                eb.setTitle(mb.getTitle());
-                                for (MessageEmbed.Field f :
-                                        mb.getFields()) {
-                                    eb.addField(f);
-                                }
-                                eb.setFooter(Objects.requireNonNull(mb.getFooter()).getText() + " - Archived");
-                                message.editMessageEmbeds(eb.build()).queue(message1 -> message1.clearReactions().queue());
+        AlertConnector ac = getAlertConnector(uuid);
+        for (WarMessage wm :
+                ac.getWarMessages()) {
+            Guild g = jda.getGuildById(wm.getGuildID());
+            if (g != null) {
+                TextChannel tc = g.getTextChannelById(wm.getChannelID());
+                if (tc != null) {
+                    tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
+                        MessageEmbed mb = message.getEmbeds().get(0);
+                        if (mb != null) {
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb.setTitle(mb.getTitle());
+                            for (MessageEmbed.Field f :
+                                    mb.getFields()) {
+                                eb.addField(f);
                             }
-                        });
-                    }
+                            eb.setFooter(Objects.requireNonNull(mb.getFooter()).getText() + " - Archived");
+                            message.editMessageEmbeds(eb.build()).queue(message1 -> message1.clearReactions().queue());
+                        }
+                    });
                 }
             }
         }

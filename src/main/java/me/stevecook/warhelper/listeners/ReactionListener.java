@@ -29,113 +29,6 @@ public class ReactionListener extends ListenerAdapter {
         this.wh = wh;
     }
 
-    private static final String[] REACTIONS = {"\uD83D\uDEE1", "\uD83D\uDDE1", "\uD83C\uDFF9", "\uD83E\uDE84", "❤", "\uD83D\uDCA5", "❓", "⛔"};
-
-    @Override
-    public void onMessageReceived(MessageReceivedEvent e) {
-        if (e.isFromGuild()) {
-            if (Objects.requireNonNull(e.getMember()).isOwner() || hasPermission(e.getGuild().getIdLong(), e.getMember().getRoles())) {
-                String[] args = e.getMessage().getContentRaw().split(" ");
-                if (args.length == 6) {
-                    if (args[0].equalsIgnoreCase("!waralert")) {
-                        LocalDate date;
-                        LocalTime time;
-                        try {
-                            date = LocalDate.parse(args[4], DateTimeFormatter.ofPattern("M/d/yyyy"));
-                            time = LocalTime.parse(args[5].substring(0, args[5].length() - 2) + args[5].substring(args[5].length() - 2).toUpperCase(), DateTimeFormatter.ofPattern("h:mma"));
-                        } catch (DateTimeParseException ex) {
-                            e.getAuthor().openPrivateChannel().queue((channel) -> channel.sendMessage("The date or time entered was invalid. Please use the formats MM/dd/yyyy and hh:mma respectively. Ex: 02/10/2022 and 12:30pm").queue());
-                            return;
-                        }
-
-                        UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + args[1].toLowerCase() + args[2].toLowerCase() + args[3].toLowerCase()).getBytes());
-                        if (!wh.channelContainsWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), uuid)) {
-                            EmbedBuilder eb = new EmbedBuilder();
-
-                            eb.setTitle(Util.convertToEmoji(args[2]));
-
-                            eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
-                            eb.addBlankField(true);
-                            eb.addField(":clock1: " + time.format(DateTimeFormatter.ofPattern("hh:mma")), "", true);
-
-                            if (wh.getAlertConnector(uuid) != null) {
-                                Util.fillEmbed(eb, uuid, wh);
-                            } else {
-                                eb.addField(":shield: TANK :shield:", "", true);
-                                eb.addBlankField(true);
-                                eb.addField(":dagger: MDPS :dagger:", "", true);
-                                eb.addBlankField(false);
-                                eb.addField(":archery: Physical RDPS :archery:", "", true);
-                                eb.addBlankField(true);
-                                eb.addField(":magic_wand: Elemental RDPS :magic_wand:", "", true);
-                                eb.addBlankField(false);
-                                eb.addField(":heart: HEALER :heart:", "", true);
-                                eb.addBlankField(true);
-                                eb.addField(":boom: ARTILLERY :boom:", "", true);
-                                eb.addBlankField(false);
-                                eb.addField(":question: Tentative :question:", "", true);
-                                eb.addBlankField(true);
-                                eb.addField(":no_entry: Not Available :no_entry:", "", true);
-                                eb.addBlankField(false);
-                            }
-                            eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
-                            eb.setFooter(uuid.toString());
-                            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
-                                for (String s : REACTIONS) {
-                                    message.addReaction(s).queue();
-                                }
-                                wh.addWarMessage(message.getGuild().getIdLong(),
-                                        message.getChannel().getIdLong(),
-                                        message.getIdLong(),
-                                        date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
-                                                time.format(DateTimeFormatter.ofPattern("hh:mma")) +
-                                                args[1].toLowerCase() +
-                                                args[2].toLowerCase() +
-                                                args[3].toLowerCase(),
-                                        date.format(DateTimeFormatter.ofPattern("EEE d. MMM")),
-                                        time.format(DateTimeFormatter.ofPattern("hh:mma")),
-                                        args[1].toLowerCase(),
-                                        args[2].toLowerCase(),
-                                        args[3].toLowerCase());
-                            }));
-                        }
-                        e.getMessage().delete().queue();
-                    }
-                } else if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("!warsave")) {
-                        try {
-                            wh.saveData();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        e.getMessage().delete().queue();
-                    }
-                } else if (args.length == 2) {
-                    if (args[0].equalsIgnoreCase("!wararchive")) {
-                        wh.archiveAlertConnector(UUID.fromString(args[1]));
-                        e.getMessage().delete().queue();
-                    } else if (args[0].equalsIgnoreCase("!warrefresh")) {
-                        Util.updateEmbeds(UUID.fromString(args[1]), wh);
-                        e.getMessage().delete().queue();
-                    }
-                } else if (args.length == 3) {
-                    if (args[0].equalsIgnoreCase("!warperm")) {
-                        if (e.getMember().isOwner() || e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                            if (e.getGuild().getRolesByName(args[2].replace('_', ' '), true).size() > 1) {
-                                if (args[1].equalsIgnoreCase("add")) {
-                                    wh.addPermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
-                                } else if (args[1].equalsIgnoreCase("remove")) {
-                                    wh.removePermission(e.getGuild().getIdLong(), e.getGuild().getRolesByName(args[2].replace('_', ' '), true).get(0).getIdLong());
-                                }
-                            }
-                        }
-                        e.getMessage().delete().queue();
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent e) {
         wh.removeWarMessage(e.getGuild().getIdLong(), e.getChannel().getIdLong(), e.getMessageIdLong());
@@ -264,10 +157,6 @@ public class ReactionListener extends ListenerAdapter {
                 });
             }
         }
-    }
-
-    private boolean hasPermission(long guildID, List<Role> roles) {
-        return wh.hasPermission(guildID, roles);
     }
 
 }

@@ -218,6 +218,7 @@ public class SlashCommandListener implements EventListener {
     private void archiveAlert(SlashCommandEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.getOption("id") == null) {
+            e.getHook().sendMessage("Invalid id").queue();
             return;
         }
         String sUUID = Objects.requireNonNull(e.getOption("id")).getAsString();
