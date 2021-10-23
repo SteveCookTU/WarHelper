@@ -280,6 +280,18 @@ public class WarHelper {
 
     public void archiveAlertConnector(UUID uuid) {
         AlertConnector ac = getAlertConnector(uuid);
+        if(mongoClient != null) {
+            MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
+            Document result = acCol.find(Filters.eq("code", uuid.toString())).projection(Projections.excludeId()).first();
+            if(result != null) {
+                acCol.deleteOne(result);
+                MongoCollection<Document> aaCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertArchive");
+                aaCol.insertOne(result);
+            }
+        } else {
+            alertConnectors.remove(ac);
+            alertArchive.add(ac);
+        }
         for (WarMessage wm :
                 ac.getWarMessages()) {
             Guild g = jda.getGuildById(wm.getGuildID());
