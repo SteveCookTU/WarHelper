@@ -59,6 +59,13 @@ public class Util {
         }
     }
 
+    public static void updateEmbedsForUser(long userId, WarHelper wh) {
+        for (AlertConnector ac :
+                wh.getAlertConnectorsWithUserID(userId)) {
+            updateEmbeds(ac.getCode(), wh);
+        }
+    }
+
     public static void fillEmbed(EmbedBuilder eb, UUID uuid, WarHelper wh) {
         JDA jda = wh.getJda();
         AlertConnector ac = wh.getAlertConnector(uuid);

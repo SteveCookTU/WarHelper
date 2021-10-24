@@ -6,10 +6,12 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
 import com.mongodb.client.model.*;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import me.stevecook.warhelper.listeners.ReactionListener;
 import me.stevecook.warhelper.listeners.SlashCommandListener;
 import me.stevecook.warhelper.structure.AlertConnector;
-import me.stevecook.warhelper.structure.RegisterSlashCommands;
 import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -42,7 +45,9 @@ public class WarHelper {
     private final Gson gson;
     private final MongoClient mongoClient;
 
-    public WarHelper() throws LoginException, IOException {
+    private final Socket socket;
+
+    public WarHelper() throws LoginException, IOException, URISyntaxException {
         String token = new String(Files.readAllBytes(Path.of("token.txt")));
 
         if(Files.exists(Path.of("dbLogin.txt"))) {
@@ -54,6 +59,29 @@ public class WarHelper {
             mongoClient = MongoClients.create(settings);
         } else {
             mongoClient = null;
+        }
+
+        if(Files.exists(Path.of("socketURI.txt"))) {
+            String socketURL = new String(Files.readAllBytes(Path.of("socketURI.txt")));
+            socket = IO.socket(socketURL);
+            socket.on(Socket.EVENT_CONNECT, objects -> socket.emit("type", "bot"));
+            socket.on("update user", new Emitter.Listener() {
+                private WarHelper wh;
+
+                @Override
+                public void call(Object... objects) {
+                    Util.updateEmbedsForUser(Long.parseLong(String.valueOf(objects[0])), wh);
+                }
+
+                private Emitter.Listener init(WarHelper var){
+                    wh = var;
+                    return this;
+                }
+
+            }.init(this));
+            socket.connect();
+        } else {
+            socket = null;
         }
 
         jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
@@ -73,7 +101,7 @@ public class WarHelper {
         userDataMap = loadUserData();
     }
 
-    public static void main(String[] args) throws LoginException, IOException {
+    public static void main(String[] args) throws LoginException, IOException, URISyntaxException {
         WarHelper warHelper = new WarHelper();
     }
 
