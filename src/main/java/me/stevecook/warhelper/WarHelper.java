@@ -63,7 +63,7 @@ public class WarHelper {
 
         if(Files.exists(Path.of("socketURI.txt"))) {
             String socketURL = new String(Files.readAllBytes(Path.of("socketURI.txt")));
-            socket = IO.socket(socketURL);
+            socket = IO.socket(socketURL.trim());
             socket.on(Socket.EVENT_CONNECT, objects -> socket.emit("type", "bot"));
             socket.on("update user", new Emitter.Listener() {
                 private WarHelper wh;
