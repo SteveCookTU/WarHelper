@@ -31,7 +31,15 @@ import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class WarHelper {
@@ -83,6 +91,17 @@ public class WarHelper {
         } else {
             socket = null;
         }
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00"));
+        ZonedDateTime nextRun = now.withHour(0).withMinute(0).withSecond(0).plusDays(1);
+
+        Duration duration = Duration.between(now, nextRun);
+        long initalDelay = duration.getSeconds();
+        ScheduledExecutorService scheduler =
+                Executors.newScheduledThreadPool(1);
+
+        scheduler.scheduleAtFixedRate(this::archiveOldAlerts, initalDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+
 
         jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -302,6 +321,28 @@ public class WarHelper {
             if(result != null) {
                 aaCol.deleteOne(Filters.eq("code", ac.getCode().toString()));
                 aaCol.insertOne(Document.parse(gson.toJson(ac, new TypeToken<AlertConnector>(){}.getType())));
+            }
+        }
+    }
+
+    public void archiveOldAlerts() {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0);
+        if(mongoClient != null) {
+            MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
+            FindIterable<Document> connectors = acCol.find();
+
+            for(Document doc : connectors) {
+                ZonedDateTime acDate = ZonedDateTime.parse(String.valueOf(doc.get("date")), DateTimeFormatter.ofPattern("EEE d. MMM"));
+                if(now.compareTo(acDate) > 0) {
+                    archiveAlertConnector(UUID.fromString(String.valueOf(doc.get("code"))));
+                }
+            }
+        } else {
+            for(AlertConnector ac : alertConnectors) {
+                ZonedDateTime acDate = ZonedDateTime.parse(String.valueOf(ac.getDate()), DateTimeFormatter.ofPattern("EEE d. MMM"));
+                if(now.compareTo(acDate) > 0) {
+                    archiveAlertConnector(ac.getCode());
+                }
             }
         }
     }

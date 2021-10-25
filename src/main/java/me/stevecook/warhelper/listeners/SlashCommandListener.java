@@ -216,14 +216,7 @@ public class SlashCommandListener implements EventListener {
     }
 
     private void archiveAlert(SlashCommandEvent e) {
-        e.deferReply().setEphemeral(true).queue();
-        if (e.getOption("id") == null) {
-            e.getHook().sendMessage("Invalid id").queue();
-            return;
-        }
-        String sUUID = Objects.requireNonNull(e.getOption("id")).getAsString();
-        wh.archiveAlertConnector(UUID.fromString(sUUID));
-        e.getHook().sendMessage("The specified alert ID has been archived.").queue();
+        e.reply("Archiving is now automated. This command deprecated.").setEphemeral(true).queue();
     }
 
     private void refreshEmbeds(SlashCommandEvent e) {
