@@ -38,7 +38,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -87,6 +86,22 @@ public class WarHelper {
                 }
 
             }.init(this));
+
+            socket.on("get permissions", new Emitter.Listener() {
+                private WarHelper wh;
+
+                @Override
+                public void call(Object... objects) {
+                    long userID = Long.parseLong(String.valueOf(objects[0]));
+
+                }
+
+                private Emitter.Listener init(WarHelper var){
+                    wh = var;
+                    return this;
+                }
+
+            }.init(this));
             socket.connect();
         } else {
             socket = null;
@@ -96,11 +111,12 @@ public class WarHelper {
         ZonedDateTime nextRun = now.withHour(0).withMinute(0).withSecond(0).plusDays(1);
 
         Duration duration = Duration.between(now, nextRun);
-        long initalDelay = duration.getSeconds();
+        long initialDelay = duration.getSeconds();
+        System.out.println("Running first archive in " + initialDelay + " seconds");
         ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(1);
 
-        scheduler.scheduleAtFixedRate(this::archiveOldAlerts, initalDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::archiveOldAlerts, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
 
         jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
@@ -326,6 +342,7 @@ public class WarHelper {
     }
 
     public void archiveOldAlerts() {
+        System.out.println("Archiving old connectors");
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0);
         if(mongoClient != null) {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
@@ -334,6 +351,7 @@ public class WarHelper {
             for(Document doc : connectors) {
                 ZonedDateTime acDate = ZonedDateTime.parse(String.valueOf(doc.get("date")), DateTimeFormatter.ofPattern("EEE d. MMM"));
                 if(now.compareTo(acDate) > 0) {
+                    System.out.println("Archiving " + doc.get("code"));
                     archiveAlertConnector(UUID.fromString(String.valueOf(doc.get("code"))));
                 }
             }

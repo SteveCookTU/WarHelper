@@ -193,7 +193,7 @@ public class SlashCommandListener implements EventListener {
             }
             eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
             eb.setFooter(uuid.toString());
-            e.getChannel().sendMessage("@everyone").queue(m -> m.editMessageEmbeds(eb.build()).queue(message -> {
+            e.getChannel().sendMessageEmbeds(eb.build()).queue(message -> {
                 for (String s : Util.REACTIONS) {
                     message.addReaction(s).queue();
                 }
@@ -209,9 +209,9 @@ public class SlashCommandListener implements EventListener {
                         time.format(DateTimeFormatter.ofPattern("hh:mma")),
                         server.toLowerCase(),
                         faction.toLowerCase(),
-                        territory.toUpperCase()
+                        territory.toLowerCase()
                 );
-            }));
+            });
         }
     }
 
