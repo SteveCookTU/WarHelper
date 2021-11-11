@@ -26,35 +26,37 @@ public class Util {
                     ac.getWarMessages()) {
                 Guild g;
                 g = jda.getGuildById(wm.getGuildID());
-                assert g != null;
-                TextChannel tc = g.getTextChannelById(wm.getChannelID());
-                assert tc != null;
-                tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
-                    MessageEmbed original = message.getEmbeds().get(0);
+                if(g != null) {
+                    TextChannel tc = g.getTextChannelById(wm.getChannelID());
+                    if(tc != null) {
+                        tc.retrieveMessageById(wm.getMessageID()).queue(message -> {
+                            MessageEmbed original = message.getEmbeds().get(0);
 
-                    EmbedBuilder eb = new EmbedBuilder();
+                            EmbedBuilder eb = new EmbedBuilder();
 
-                    eb.setTitle(original.getTitle());
+                            eb.setTitle(original.getTitle());
 
-                    eb.addField(original.getFields().get(0));
-                    eb.addBlankField(true);
-                    eb.addField(original.getFields().get(2));
+                            eb.addField(original.getFields().get(0));
+                            eb.addBlankField(true);
+                            eb.addField(original.getFields().get(2));
 
-                    fillEmbed(eb, uuid, wh);
+                            fillEmbed(eb, uuid, wh);
 
-                    eb.addField(original.getFields().get(original.getFields().size() - 1));
+                            eb.addField(original.getFields().get(original.getFields().size() - 1));
 
-                    eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
+                            eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
 
-                    message.editMessageEmbeds(eb.build()).queue();
+                            message.editMessageEmbeds(eb.build()).queue();
 
-                    for(String s : REACTIONS) {
-                        if(message.getReactions().stream().noneMatch(r -> r.getReactionEmote().getName().equalsIgnoreCase(s))) {
-                            message.addReaction(s).queue();
-                        }
+                            for(String s : REACTIONS) {
+                                if(message.getReactions().stream().noneMatch(r -> r.getReactionEmote().getName().equalsIgnoreCase(s))) {
+                                    message.addReaction(s).queue();
+                                }
+                            }
+
+                        });
                     }
-
-                });
+                }
             }
         }
     }
