@@ -79,7 +79,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://war-helper.com)
 
-[Invite Link](https://discord.com/api/oauth2/authorize?client_id=894254301269086278&permissions=536267455569&scope=bot%20applications.commands)
+[Official Invite Link](https://discord.com/api/oauth2/authorize?client_id=894254301269086278&permissions=536267455569&scope=bot%20applications.commands)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
