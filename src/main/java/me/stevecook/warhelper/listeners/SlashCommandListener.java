@@ -69,8 +69,10 @@ public class SlashCommandListener implements EventListener {
                         }
                         case "refresh" -> {
                             if (e.isFromGuild())
-                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                                if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles())) {
                                     refreshEmbeds(e);
+                                    e.reply("The specified embed has been refreshed.").setEphemeral(true).queue();
+                                }
                                 else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
                             else
