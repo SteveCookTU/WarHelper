@@ -31,9 +31,7 @@ import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -107,16 +105,10 @@ public class WarHelper {
             socket = null;
         }
 
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00"));
-        ZonedDateTime nextRun = now.withHour(0).withMinute(0).withSecond(0).plusDays(1);
-
-        Duration duration = Duration.between(now, nextRun);
-        long initialDelay = duration.getSeconds();
-        System.out.println("Running first archive in " + initialDelay + " seconds");
         ScheduledExecutorService scheduler =
-                Executors.newScheduledThreadPool(1);
+                Executors.newScheduledThreadPool(2);
 
-        scheduler.scheduleAtFixedRate(this::archiveOldAlerts, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::archiveOldAlerts, 10, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
 
         jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
@@ -346,10 +338,18 @@ public class WarHelper {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0);
         if(mongoClient != null) {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
-            FindIterable<Document> connectors = acCol.find();
+            MongoCursor<Document> connectors = acCol.find().iterator();
+            while(connectors.hasNext()) {
+                Document doc = connectors.next();
+                MonthDay date;
+                try{
+                     date = MonthDay.parse(String.valueOf(doc.get("date")), DateTimeFormatter.ofPattern("EEE d. MMM"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+                ZonedDateTime acDate = date.atYear(LocalDate.now().getYear()).atStartOfDay(ZoneId.of("GMT-12:00"));
 
-            for (Document doc : connectors) {
-                ZonedDateTime acDate = ZonedDateTime.parse(String.valueOf(doc.get("date")), DateTimeFormatter.ofPattern("EEE d. MMM"));
                 if (now.compareTo(acDate) > 0) {
                     System.out.println("Archiving " + doc.get("code"));
                     archiveAlertConnector(UUID.fromString(String.valueOf(doc.get("code"))));
