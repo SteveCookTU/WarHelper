@@ -348,9 +348,9 @@ public class WarHelper {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
             FindIterable<Document> connectors = acCol.find();
 
-            for(Document doc : connectors) {
+            for (Document doc : connectors) {
                 ZonedDateTime acDate = ZonedDateTime.parse(String.valueOf(doc.get("date")), DateTimeFormatter.ofPattern("EEE d. MMM"));
-                if(now.compareTo(acDate) > 0) {
+                if (now.compareTo(acDate) > 0) {
                     System.out.println("Archiving " + doc.get("code"));
                     archiveAlertConnector(UUID.fromString(String.valueOf(doc.get("code"))));
                 }
