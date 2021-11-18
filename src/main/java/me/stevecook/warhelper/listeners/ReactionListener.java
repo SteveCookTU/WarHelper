@@ -30,7 +30,7 @@ public class ReactionListener extends ListenerAdapter {
             if (!e.getUser().isBot()) {
                 e.getChannel().retrieveMessageById(e.getMessageIdLong()).queue(message -> {
                     MessageEmbed mb = message.getEmbeds().get(0);
-                    UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()));
+                    UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()).substring(0, 36)));
                     String reactionName = e.getReactionEmote().getName();
                     AlertConnector ac = wh.getAlertConnector(uuid);
 
@@ -92,7 +92,7 @@ public class ReactionListener extends ListenerAdapter {
             if (!Objects.requireNonNull(e.getUser()).isBot()) {
                 e.getChannel().retrieveMessageById(e.getMessageIdLong()).queue(message -> {
                     MessageEmbed mb = message.getEmbeds().get(0);
-                    UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()));
+                    UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()).substring(0, 36)));
                     String reactionName = e.getReactionEmote().getName();
 
                     AlertConnector ac = wh.getAlertConnector(uuid);

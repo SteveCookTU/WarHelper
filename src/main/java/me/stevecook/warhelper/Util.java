@@ -44,7 +44,7 @@ public class Util {
 
                             eb.addField(original.getFields().get(original.getFields().size() - 1));
 
-                            eb.setFooter(Objects.requireNonNull(original.getFooter()).getText());
+                            eb.setFooter(Objects.requireNonNull(Objects.requireNonNull(original.getFooter()).getText()).substring(0, 36));
 
                             message.editMessageEmbeds(eb.build()).queue();
 
@@ -103,7 +103,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         tanks.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
@@ -129,7 +129,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         erdps.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
@@ -155,7 +155,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         prdps.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
@@ -181,7 +181,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         mdps.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
@@ -207,7 +207,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         healers.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")
@@ -233,7 +233,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         tentative.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("\n");
@@ -250,7 +250,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         notAvailable.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("\n");
@@ -267,7 +267,7 @@ public class Util {
                         assert temp != null;
                         UserData userData = wh.getUserData(id);
                         artillery.append("`")
-                                .append(String.format("%02d", userData.getLevel()))
+                                .append(String.format("%02d", userData.getGearScore()))
                                 .append("`")
                                 .append(Objects.requireNonNull(temp.getMemberById(id)).getEffectiveName())
                                 .append("`")

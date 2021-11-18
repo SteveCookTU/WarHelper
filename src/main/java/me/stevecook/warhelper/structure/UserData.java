@@ -7,6 +7,7 @@ public class UserData {
     private int mainHandLevel;
     private int secondaryLevel;
     private int level;
+    private int gearScore;
 
     public UserData() {
         mainHand = "undefined";
@@ -14,6 +15,7 @@ public class UserData {
         mainHandLevel = 0;
         secondaryLevel = 0;
         level = 1;
+        gearScore = 0;
     }
 
     public void setMainHand(String mainHand) {
@@ -36,6 +38,8 @@ public class UserData {
         this.level = level;
     }
 
+    public void setGearScore(int gearScore) { this.gearScore = gearScore; }
+
     public String getMainHand() {
         return mainHand;
     }
@@ -54,6 +58,10 @@ public class UserData {
 
     public int getLevel() {
         return level;
+    }
+
+    public int getGearScore() {
+        return gearScore;
     }
 
     public static String getWeaponAbbreviation(String weaponName) {

@@ -137,6 +137,20 @@ public class SlashCommandListener implements EventListener {
                                 Util.updateEmbeds(ac.getCode(), wh);
                             }
                         }
+                        case "gearscore" -> {
+                            if (Objects.requireNonNull(e.getOption("gearscore")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("gearscore")).getAsDouble() > 600) {
+                                e.getHook().sendMessage("Please enter a gear score from 0 to 600 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            userData.setGearScore((int) Objects.requireNonNull(e.getOption("gearscore")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
+                            e.getHook().sendMessage("Gear score set to " + userData.getGearScore()).queue();
+                            for (AlertConnector ac :
+                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
+                                Util.updateEmbeds(ac.getCode(), wh);
+                            }
+                        }
                     }
                 }
             }

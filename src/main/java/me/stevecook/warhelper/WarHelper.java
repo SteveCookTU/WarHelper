@@ -12,6 +12,7 @@ import io.socket.emitter.Emitter;
 import me.stevecook.warhelper.listeners.ReactionListener;
 import me.stevecook.warhelper.listeners.SlashCommandListener;
 import me.stevecook.warhelper.structure.AlertConnector;
+import me.stevecook.warhelper.structure.RegisterSlashCommands;
 import me.stevecook.warhelper.structure.UserData;
 import me.stevecook.warhelper.structure.WarMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -113,10 +114,12 @@ public class WarHelper {
 
         jda = JDABuilder.createDefault(token.trim()).setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setActivity(Activity.competing("WAR"))
                 .addEventListeners(new ReactionListener(this), new SlashCommandListener(this))
                 .build();
+
+        //RegisterSlashCommands.register(jda);
 
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
@@ -335,7 +338,7 @@ public class WarHelper {
 
     public void archiveOldAlerts() {
         System.out.println("Archiving old connectors");
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0);
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0).minusDays(1);
         if(mongoClient != null) {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
             MongoCursor<Document> connectors = acCol.find().iterator();

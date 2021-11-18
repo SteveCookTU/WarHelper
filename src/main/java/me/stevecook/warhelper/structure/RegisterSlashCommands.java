@@ -76,7 +76,9 @@ public class RegisterSlashCommands {
                                                                 new Command.Choice("Ice Gauntlet", "ice gauntlet")),
                                                 new OptionData(OptionType.INTEGER, "level", "Weapon skill level", true)),
                                 new SubcommandData("level", "Set the level of your character")
-                                        .addOptions(new OptionData(OptionType.INTEGER, "level", "Character level", true))))
+                                        .addOptions(new OptionData(OptionType.INTEGER, "level", "Character level", true)),
+                                new SubcommandData("gearscore", "Set the overall gear score of your character")
+                                        .addOptions(new OptionData(OptionType.INTEGER, "gearscore", "Gear score number", true))))
                 .queue();
 
     }
