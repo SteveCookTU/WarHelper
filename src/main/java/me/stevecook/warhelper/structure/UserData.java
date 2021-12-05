@@ -99,6 +99,9 @@ public class UserData {
             case "ice gauntlet" -> {
                 return "IG";
             }
+            case "void gauntlet" -> {
+                return "VG";
+            }
             default -> {
                 return "N/A";
             }
