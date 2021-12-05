@@ -208,7 +208,8 @@ public class WarHelper {
                     .first();
             if(result != null) {
                 Map<Long, UserData> temp = gson.fromJson(result.toJson(), new TypeToken<Map<Long, UserData>>(){}.getType());
-                return temp.get(userID);
+
+                return temp.get(userID) == null ? new UserData() : temp.get(userID);
             }
         } else {
             if(userDataMap.containsKey(userID))
