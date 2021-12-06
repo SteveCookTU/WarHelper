@@ -59,7 +59,8 @@ public class RegisterSlashCommands {
                                                                 new Command.Choice("Musket", "musket"),
                                                                 new Command.Choice("Fire Staff", "fire staff"),
                                                                 new Command.Choice("Life Staff", "life staff"),
-                                                                new Command.Choice("Ice Gauntlet", "ice gauntlet")),
+                                                                new Command.Choice("Ice Gauntlet", "ice gauntlet"),
+                                                                new Command.Choice("Void Gauntlet", "void gauntlet")),
                                                 new OptionData(OptionType.INTEGER, "level", "Weapon skill level", true)),
                                 new SubcommandData("secondary", "Set the secondary weapon of your character")
                                         .addOptions(new OptionData(OptionType.STRING, "weapon", "The weapon to set", true)
@@ -74,7 +75,7 @@ public class RegisterSlashCommands {
                                                                 new Command.Choice("Fire Staff", "fire staff"),
                                                                 new Command.Choice("Life Staff", "life staff"),
                                                                 new Command.Choice("Ice Gauntlet", "ice gauntlet"),
-                                                                new Command.Choice("Voice Gauntlet", "void gauntlet")),
+                                                                new Command.Choice("Void Gauntlet", "void gauntlet")),
                                                 new OptionData(OptionType.INTEGER, "level", "Weapon skill level", true)),
                                 new SubcommandData("level", "Set the level of your character")
                                         .addOptions(new OptionData(OptionType.INTEGER, "level", "Character level", true)),

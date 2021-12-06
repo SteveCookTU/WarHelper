@@ -119,7 +119,7 @@ public class WarHelper {
                 .addEventListeners(new ReactionListener(this), new SlashCommandListener(this))
                 .build();
 
-        //RegisterSlashCommands.register(jda);
+        RegisterSlashCommands.register(jda);
 
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
