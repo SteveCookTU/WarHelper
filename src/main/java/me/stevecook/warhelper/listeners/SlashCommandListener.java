@@ -72,8 +72,7 @@ public class SlashCommandListener implements EventListener {
                                 if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles())) {
                                     refreshEmbeds(e);
                                     e.reply("The specified embed has been refreshed.").setEphemeral(true).queue();
-                                }
-                                else
+                                } else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
                             else
                                 e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
@@ -153,6 +152,17 @@ public class SlashCommandListener implements EventListener {
                         }
                     }
                 }
+            } else if (e.getName().equalsIgnoreCase("event")) {
+                if (e.getSubcommandName() != null) {
+                    e.deferReply(true).queue();
+                    if (e.isFromGuild())
+                        if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
+                            createAlert(e);
+                        else
+                            e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
+                    else
+                        e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
+                }
             }
         }
     }
@@ -173,15 +183,20 @@ public class SlashCommandListener implements EventListener {
             return;
         }
         e.reply("Generating war message.").setEphemeral(true).queue();
+        String server = "localevent" + Objects.requireNonNull(e.getGuild()).getName();
+        String faction = "event";
         String territory = Objects.requireNonNull(e.getOption("territory")).getAsString();
-        String server = Objects.requireNonNull(e.getOption("server")).getAsString();
-        String faction = Objects.requireNonNull(e.getOption("faction")).getAsString();
+        if(Objects.requireNonNull(e.getSubcommandName()).equalsIgnoreCase("world") || e.getSubcommandName().equalsIgnoreCase("alert"))
+            server = Objects.requireNonNull(e.getOption("server")).getAsString();
+        if(e.getSubcommandName().equalsIgnoreCase("alert"))
+            faction = Objects.requireNonNull(e.getOption("faction")).getAsString();
 
         UUID uuid = UUID.nameUUIDFromBytes((date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) + time.format(DateTimeFormatter.ofPattern("hh:mma")) + server.toLowerCase() + faction.toLowerCase() + territory.toLowerCase()).getBytes());
         if (!wh.channelContainsWarMessage(Objects.requireNonNull(e.getGuild()).getIdLong(), e.getChannel().getIdLong(), uuid)) {
             EmbedBuilder eb = new EmbedBuilder();
 
-            eb.setTitle(Util.convertToEmoji(territory));
+            eb.setTitle(e.getSubcommandName().equalsIgnoreCase("alert") ? "War Alert" : Objects.requireNonNull(e.getOption("name")).getAsString());
+            eb.setDescription(Util.convertToEmoji(territory));
 
             eb.addField(":calendar_spiral: " + date.format(DateTimeFormatter.ofPattern("EEE d. MMM")), "", true);
             eb.addBlankField(true);
@@ -209,6 +224,8 @@ public class SlashCommandListener implements EventListener {
             }
             eb.addField("NOTE", "Remember to use '/register' to register your in-game data.", false);
             eb.setFooter(uuid.toString());
+            String finalFaction = faction;
+            String finalServer = server;
             e.getChannel().sendMessageEmbeds(eb.build()).queue(message -> {
                 for (String s : Util.REACTIONS) {
                     message.addReaction(s).queue();
@@ -218,14 +235,16 @@ public class SlashCommandListener implements EventListener {
                         message.getIdLong(),
                         date.format(DateTimeFormatter.ofPattern("EEE d. MMM")) +
                                 time.format(DateTimeFormatter.ofPattern("hh:mma")) +
-                                server.toLowerCase() +
-                                faction.toLowerCase() +
+                                finalServer.toLowerCase() +
+                                finalFaction.toLowerCase() +
                                 territory.toLowerCase(),
                         date.format(DateTimeFormatter.ofPattern("EEE d. MMM")),
                         time.format(DateTimeFormatter.ofPattern("hh:mma")),
-                        server.toLowerCase(),
-                        faction.toLowerCase(),
-                        territory.toLowerCase()
+                        finalServer.toLowerCase(),
+                        finalFaction.toLowerCase(),
+                        territory.toLowerCase(),
+                        e.getName().equalsIgnoreCase("war") ? "" : Objects.requireNonNull(e.getOption("name")).getAsString(),
+                        e.getName().equalsIgnoreCase("war") ? 0 : 1
                 );
             });
         }

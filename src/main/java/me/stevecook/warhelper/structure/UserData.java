@@ -4,10 +4,10 @@ public class UserData {
 
     private String mainHand;
     private String secondary;
-    private int mainHandLevel;
-    private int secondaryLevel;
-    private int level;
-    private int gearScore;
+    private Integer mainHandLevel;
+    private Integer secondaryLevel;
+    private Integer level;
+    private Integer gearScore;
 
     public UserData() {
         mainHand = "undefined";
@@ -48,19 +48,19 @@ public class UserData {
         return secondary;
     }
 
-    public int getMainHandLevel() {
+    public Integer getMainHandLevel() {
         return mainHandLevel;
     }
 
-    public int getSecondaryLevel() {
+    public Integer getSecondaryLevel() {
         return secondaryLevel;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public int getGearScore() {
+    public Integer getGearScore() {
         return gearScore;
     }
 

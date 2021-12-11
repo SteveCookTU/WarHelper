@@ -145,10 +145,10 @@ public class WarHelper {
         return null;
     }
 
-    public void addWarMessage(long guildID, long channelID, long messageID, String toEncode, String date, String time, String server, String faction, String territory) {
+    public void addWarMessage(long guildID, long channelID, long messageID, String toEncode, String date, String time, String server, String faction, String territory, String title, int type) {
         AlertConnector ac = getAlertConnector(UUID.nameUUIDFromBytes(toEncode.getBytes()));
         if (ac == null) {
-            ac = createAlertConnectors(toEncode, date, time, server, faction, territory);
+            ac = createAlertConnectors(toEncode, date, time, server, faction, territory, title, type);
         }
         ac.addWarMessage(guildID, channelID, messageID);
         updateAlertConnector(ac);
@@ -297,8 +297,8 @@ public class WarHelper {
         return false;
     }
 
-    public AlertConnector createAlertConnectors(String toEncode, String date, String time, String server, String faction, String territory) {
-        AlertConnector ac = new AlertConnector(toEncode, date, time, server, faction, territory);
+    public AlertConnector createAlertConnectors(String toEncode, String date, String time, String server, String faction, String territory, String title, int type) {
+        AlertConnector ac = new AlertConnector(toEncode, date, time, server, faction, territory, title, type);
         if(mongoClient != null) {
             MongoCollection<Document> acCol = mongoClient.getDatabase("warhelperDB").getCollection("AlertConnectors");
             Document result = acCol.find(Filters.eq("code", UUID.nameUUIDFromBytes(toEncode.getBytes()).toString())).projection(Projections.excludeId()).first();

@@ -12,6 +12,8 @@ public class AlertConnector {
     private final String territory;
     private final String date;
     private final String time;
+    private final String title;
+    private final Integer type;
     private final Map<Long, Long> tanks;
     private final Map<Long, Long> erdps;
     private final Map<Long, Long> prdps;
@@ -22,13 +24,15 @@ public class AlertConnector {
     private final Map<Long, Long> artillery;
     private final List<WarMessage> warMessages;
 
-    public AlertConnector(String toEncode, String date, String time, String server, String faction, String territory) {
+    public AlertConnector(String toEncode, String date, String time, String server, String faction, String territory, String title, int type) {
         code = UUID.nameUUIDFromBytes(toEncode.getBytes());
         this.date = date;
         this.time = time;
         this.server = server;
         this.faction = faction;
         this.territory = territory;
+        this.title = title;
+        this.type = type;
         tanks = new HashMap<>();
         erdps = new HashMap<>();
         prdps = new HashMap<>();
@@ -226,6 +230,10 @@ public class AlertConnector {
     public String getTime() {
         return time;
     }
+
+    public String getTitle() { return title; }
+
+    public Integer getType() { return type; }
 
     @Override
     public boolean equals(Object obj) {
