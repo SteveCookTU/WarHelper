@@ -170,9 +170,6 @@ public class SlashCommandListener implements EventListener {
     private void createAlert(SlashCommandEvent e) {
         LocalDate date;
         LocalTime time;
-        if (e.getOption("date") == null || e.getOption("time") == null || e.getOption("territory") == null || e.getOption("server") == null || e.getOption("faction") == null) {
-            return;
-        }
         try {
             String sDate = Objects.requireNonNull(e.getOption("date")).getAsString();
             String sTime = Objects.requireNonNull(e.getOption("time")).getAsString();
