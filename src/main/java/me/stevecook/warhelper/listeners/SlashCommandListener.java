@@ -154,7 +154,6 @@ public class SlashCommandListener implements EventListener {
                 }
             } else if (e.getName().equalsIgnoreCase("event")) {
                 if (e.getSubcommandName() != null) {
-                    e.deferReply(true).queue();
                     if (e.isFromGuild())
                         if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles()))
                             createAlert(e);
