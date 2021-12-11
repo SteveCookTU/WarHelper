@@ -119,7 +119,8 @@ public class WarHelper {
                 .addEventListeners(new ReactionListener(this), new SlashCommandListener(this))
                 .build();
 
-        RegisterSlashCommands.register(jda);
+        //RegisterSlashCommands.register(jda);
+
 
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
@@ -338,6 +339,7 @@ public class WarHelper {
     }
 
     public void archiveOldAlerts() {
+        System.out.println("Connected to " + jda.getGuilds().size() + " guilds.");
         System.out.println("Archiving old connectors");
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT-12:00")).withHour(0).withMinute(0).withSecond(0).minusDays(1);
         if(mongoClient != null) {

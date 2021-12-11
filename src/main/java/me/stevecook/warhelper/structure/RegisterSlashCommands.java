@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 public class RegisterSlashCommands {
 
     public static void register(JDA jda) {
-        jda.upsertCommand(new CommandData("war", "Base command for war helper")
+        jda.upsertCommand(new CommandData("war", "Base command for war helper wars")
                         .addSubcommands(new SubcommandData("alert", "Creates a war alert with the designated parameters. (Bot admin)")
                                         .addOptions(new OptionData(OptionType.STRING, "server", "Designated server for the war", true),
                                                 new OptionData(OptionType.STRING, "faction", "Designated faction for the war", true)
@@ -45,6 +45,47 @@ public class RegisterSlashCommands {
                                 new SubcommandData("refresh", "Refresh all current embeds (Bot admin)")
                                         .addOptions(new OptionData(OptionType.STRING, "id", "ID of the alert to archive", true))))
                 .queue();
+
+        jda.upsertCommand(new CommandData("event", "Base command for war helper events.")
+                .addSubcommands(new SubcommandData("local", "setup for local events")
+                                .addOptions(new OptionData(OptionType.STRING, "name", "name for the event", true),
+                                        new OptionData(OptionType.STRING, "territory", "Designated territory for the event", true)
+                                                .addChoices(new Command.Choice("Brightwood", "brightwood"),
+                                                        new Command.Choice("Cutlass Keys", "cutlass_keys"),
+                                                        new Command.Choice("Ebonscale Reach", "ebonscale_reach"),
+                                                        new Command.Choice("Edengrove", "edengrove"),
+                                                        new Command.Choice("Everfall", "everfall"),
+                                                        new Command.Choice("First Light", "first_light"),
+                                                        new Command.Choice("Great Cleave", "great_cleave"),
+                                                        new Command.Choice("Monarch's Bluffs", "monarchs_bluffs"),
+                                                        new Command.Choice("Mourningdale", "mourningdale"),
+                                                        new Command.Choice("Reekwater", "reekwater"),
+                                                        new Command.Choice("Restless Shore", "restless_shore"),
+                                                        new Command.Choice("Shattered Mountain", "shattered_mountain"),
+                                                        new Command.Choice("Weaver's Fen", "weavers_fen"),
+                                                        new Command.Choice("Windsward", "windsward")),
+                                        new OptionData(OptionType.STRING, "date", "Designated date for the event (M/d/yyyy)", true),
+                                        new OptionData(OptionType.STRING, "time", "Designated time for the event (h:mma) Ex. 4:00PM", true)),
+                        new SubcommandData("world", "setup for world events")
+                                .addOptions(new OptionData(OptionType.STRING, "server", "server for the event", true),
+                                        new OptionData(OptionType.STRING, "name", "name for the event", true),
+                                        new OptionData(OptionType.STRING, "territory", "Designated territory for the event", true)
+                                                .addChoices(new Command.Choice("Brightwood", "brightwood"),
+                                                        new Command.Choice("Cutlass Keys", "cutlass_keys"),
+                                                        new Command.Choice("Ebonscale Reach", "ebonscale_reach"),
+                                                        new Command.Choice("Edengrove", "edengrove"),
+                                                        new Command.Choice("Everfall", "everfall"),
+                                                        new Command.Choice("First Light", "first_light"),
+                                                        new Command.Choice("Great Cleave", "great_cleave"),
+                                                        new Command.Choice("Monarch's Bluffs", "monarchs_bluffs"),
+                                                        new Command.Choice("Mourningdale", "mourningdale"),
+                                                        new Command.Choice("Reekwater", "reekwater"),
+                                                        new Command.Choice("Restless Shore", "restless_shore"),
+                                                        new Command.Choice("Shattered Mountain", "shattered_mountain"),
+                                                        new Command.Choice("Weaver's Fen", "weavers_fen"),
+                                                        new Command.Choice("Windsward", "windsward")),
+                                        new OptionData(OptionType.STRING, "date", "Designated date for the event (M/d/yyyy)", true),
+                                        new OptionData(OptionType.STRING, "time", "Designated time for the event (h:mma) Ex. 4:00PM", true)))).queue();
 
         jda.upsertCommand(new CommandData("register", "Register user data from new world to discord")
                         .addSubcommands(new SubcommandData("mainhand", "Set the main hand weapon of your character")
@@ -84,5 +125,4 @@ public class RegisterSlashCommands {
                 .queue();
 
     }
-
 }
