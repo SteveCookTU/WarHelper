@@ -200,7 +200,7 @@ public class SlashCommandListener implements EventListener {
                         e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                 }
             } else if (e.getName().equalsIgnoreCase("warstats")) {
-                generateStatsEmbed(e, !wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(),
+                generateStatsEmbed(e, e.isFromGuild() && !wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(),
                         Objects.requireNonNull(e.getMember()).getRoles()));
             }
         }
