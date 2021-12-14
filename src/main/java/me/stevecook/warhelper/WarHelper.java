@@ -63,8 +63,16 @@ public class WarHelper {
                     .applyConnectionString(connectionString)
                     .build();
             mongoClient = MongoClients.create(settings);
+            alertConnectors = new ArrayList<>();
+            alertArchive = new ArrayList<>();
+            permissions = new TreeMap<>();
+            userDataMap = new TreeMap<>();
         } else {
             mongoClient = null;
+            alertConnectors = loadActiveAlerts();
+            alertArchive = loadArchivedAlerts();
+            permissions = loadPermissions();
+            userDataMap = loadUserData();
         }
 
         if(Files.exists(Path.of("socketURI.txt"))) {
@@ -121,15 +129,10 @@ public class WarHelper {
 
         //RegisterSlashCommands.register(jda);
 
-
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         gson = builder.create();
 
-        alertConnectors = loadActiveAlerts();
-        alertArchive = loadArchivedAlerts();
-        permissions = loadPermissions();
-        userDataMap = loadUserData();
     }
 
     public static void main(String[] args) throws LoginException, IOException, URISyntaxException {

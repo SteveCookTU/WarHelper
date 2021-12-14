@@ -4,6 +4,8 @@ import me.stevecook.warhelper.Util;
 import me.stevecook.warhelper.WarHelper;
 import me.stevecook.warhelper.structure.AlertConnector;
 import me.stevecook.warhelper.structure.UserData;
+import me.stevecook.warhelper.structure.enums.Tradeskill;
+import me.stevecook.warhelper.structure.enums.Weapon;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -71,7 +74,6 @@ public class SlashCommandListener implements EventListener {
                             if (e.isFromGuild())
                                 if (wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(), Objects.requireNonNull(e.getMember()).getRoles())) {
                                     refreshEmbeds(e);
-                                    e.reply("The specified embed has been refreshed.").setEphemeral(true).queue();
                                 } else
                                     e.reply("You do not have permission to use this command.").setEphemeral(true).queue();
                             else
@@ -93,30 +95,20 @@ public class SlashCommandListener implements EventListener {
                     e.deferReply(true).queue();
                     switch (e.getSubcommandName()) {
                         case "mainhand" -> {
-                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
-                                e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
-                                return;
-                            }
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
-                            userData.setMainHand(Objects.requireNonNull(e.getOption("weapon")).getAsString());
-                            userData.setMainHandLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            userData.setMainHand(Weapon.valueOf(Objects.requireNonNull(e.getOption("weapon")).getAsString()));
                             wh.updateUserData(e.getUser().getIdLong(), userData);
-                            e.getHook().sendMessage("Main hand set to " + userData.getMainHand() + " level " + userData.getMainHandLevel()).queue();
+                            e.getHook().sendMessage("Main hand set to " + userData.getMainHand().getLabel()).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
                                 Util.updateEmbeds(ac.getCode(), wh);
                             }
                         }
                         case "secondary" -> {
-                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
-                                e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
-                                return;
-                            }
                             UserData userData = wh.getUserData(e.getUser().getIdLong());
-                            userData.setSecondary(Objects.requireNonNull(e.getOption("weapon")).getAsString());
-                            userData.setSecondaryLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            userData.setSecondary(Weapon.valueOf(Objects.requireNonNull(e.getOption("weapon")).getAsString()));
                             wh.updateUserData(e.getUser().getIdLong(), userData);
-                            e.getHook().sendMessage("Secondary set to " + userData.getSecondary() + " level " + userData.getSecondaryLevel()).queue();
+                            e.getHook().sendMessage("Secondary set to " + userData.getSecondary().getLabel()).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
                                 Util.updateEmbeds(ac.getCode(), wh);
@@ -131,10 +123,6 @@ public class SlashCommandListener implements EventListener {
                             userData.setLevel((int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
                             wh.updateUserData(e.getUser().getIdLong(), userData);
                             e.getHook().sendMessage("Level set to " + userData.getLevel()).queue();
-                            for (AlertConnector ac :
-                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
-                                Util.updateEmbeds(ac.getCode(), wh);
-                            }
                         }
                         case "gearscore" -> {
                             if (Objects.requireNonNull(e.getOption("gearscore")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("gearscore")).getAsDouble() > 600) {
@@ -145,6 +133,36 @@ public class SlashCommandListener implements EventListener {
                             userData.setGearScore((int) Objects.requireNonNull(e.getOption("gearscore")).getAsDouble());
                             wh.updateUserData(e.getUser().getIdLong(), userData);
                             e.getHook().sendMessage("Gear score set to " + userData.getGearScore()).queue();
+                            for (AlertConnector ac :
+                                    wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
+                                Util.updateEmbeds(ac.getCode(), wh);
+                            }
+                        }
+                        case "tradeskill" -> {
+                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 200) {
+                                e.getHook().sendMessage("Please enter a level from 0 to 200 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            Tradeskill skill = Arrays.stream(Tradeskill.values())
+                                    .filter(s -> s.getId() == Objects.requireNonNull(e.getOption("skill")).getAsLong())
+                                    .toList().get(0);
+                            userData.setTradeSkill(skill,
+                                    (int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
+                            e.getHook().sendMessage(skill.getLabel() + " set to " + userData.getTradeSkill(skill)).queue();
+                        }
+                        case "weaponlevel" -> {
+                            if (Objects.requireNonNull(e.getOption("level")).getAsDouble() < 0 || Objects.requireNonNull(e.getOption("level")).getAsDouble() > 20) {
+                                e.getHook().sendMessage("Please enter a level from 0 to 20 (inclusive).").queue();
+                                return;
+                            }
+                            UserData userData = wh.getUserData(e.getUser().getIdLong());
+                            Weapon weapon = Weapon.valueOf(Objects.requireNonNull(e.getOption("weapon")).getAsString());
+                            userData.setWeaponLevel(weapon,
+                                    (int) Objects.requireNonNull(e.getOption("level")).getAsDouble());
+                            wh.updateUserData(e.getUser().getIdLong(), userData);
+                            e.getHook().sendMessage(weapon.getLabel() + " set to " + userData.getWeaponLevel(weapon)).queue();
                             for (AlertConnector ac :
                                     wh.getAlertConnectorsWithUserID(e.getUser().getIdLong())) {
                                 Util.updateEmbeds(ac.getCode(), wh);

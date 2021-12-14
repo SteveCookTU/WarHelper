@@ -1,37 +1,42 @@
 package me.stevecook.warhelper.structure;
 
+import me.stevecook.warhelper.structure.enums.Tradeskill;
+import me.stevecook.warhelper.structure.enums.Weapon;
+
+import java.util.*;
+
 public class UserData {
 
-    private String mainHand;
-    private String secondary;
-    private Integer mainHandLevel;
-    private Integer secondaryLevel;
+    private Weapon mainHand;
+    private Weapon secondary;
     private Integer level;
     private Integer gearScore;
+    private final Map<Tradeskill, Integer> tradeSkills;
+    private final Map<Weapon, Integer> weapons;
 
     public UserData() {
-        mainHand = "undefined";
-        secondary = "undefined";
-        mainHandLevel = 0;
-        secondaryLevel = 0;
+        mainHand = null;
+        secondary = null;
         level = 1;
         gearScore = 0;
+        tradeSkills = new LinkedHashMap<>();
+        weapons = new LinkedHashMap<>();
+        EnumSet<Tradeskill> skills = EnumSet.allOf(Tradeskill.class);
+        for(Tradeskill s : skills) {
+            tradeSkills.put(s, 0);
+        }
+        EnumSet<Weapon> weaponList = EnumSet.allOf(Weapon.class);
+        for(Weapon s : weaponList) {
+            weapons.put(s, 0);
+        }
     }
 
-    public void setMainHand(String mainHand) {
+    public void setMainHand(Weapon mainHand) {
         this.mainHand = mainHand;
     }
 
-    public void setSecondary(String secondary) {
+    public void setSecondary(Weapon secondary) {
         this.secondary = secondary;
-    }
-
-    public void setMainHandLevel(int mainHandLevel) {
-        this.mainHandLevel = mainHandLevel;
-    }
-
-    public void setSecondaryLevel(int secondaryLevel) {
-        this.secondaryLevel = secondaryLevel;
     }
 
     public void setLevel(int level) {
@@ -40,20 +45,34 @@ public class UserData {
 
     public void setGearScore(int gearScore) { this.gearScore = gearScore; }
 
-    public String getMainHand() {
+    public void setTradeSkill(Tradeskill skill, int level) {
+        tradeSkills.put(skill, level);
+    }
+
+    public void setWeaponLevel(Weapon weapon, int level) {
+        weapons.put(weapon, level);
+    }
+
+    public Weapon getMainHand() {
         return mainHand;
     }
 
-    public String getSecondary() {
+    public Weapon getSecondary() {
         return secondary;
     }
 
     public Integer getMainHandLevel() {
-        return mainHandLevel;
+        if(mainHand == null) {
+            return 0;
+        }
+        return weapons.get(mainHand);
     }
 
     public Integer getSecondaryLevel() {
-        return secondaryLevel;
+        if(secondary == null) {
+            return 0;
+        }
+        return weapons.get(secondary);
     }
 
     public Integer getLevel() {
@@ -64,47 +83,12 @@ public class UserData {
         return gearScore;
     }
 
-    public static String getWeaponAbbreviation(String weaponName) {
-        switch (weaponName) {
-            case "sword and shield" -> {
-                return "SS";
-            }
-            case "rapier" -> {
-                return "R";
-            }
-            case "hatchet" -> {
-                return "H";
-            }
-            case "spear" -> {
-                return "S";
-            }
-            case "great axe" -> {
-                return "GA";
-            }
-            case "war hammer" -> {
-                return "WH";
-            }
-            case "bow" -> {
-                return "B";
-            }
-            case "musket" -> {
-                return "M";
-            }
-            case "fire staff" -> {
-                return "FS";
-            }
-            case "ice staff", "life staff" -> {
-                return "LS";
-            }
-            case "ice gauntlet" -> {
-                return "IG";
-            }
-            case "void gauntlet" -> {
-                return "VG";
-            }
-            default -> {
-                return "N/A";
-            }
-        }
+    public Integer getTradeSkill(Tradeskill skill) { return tradeSkills.get(skill); }
+
+    public Map<Tradeskill, Integer> getTradeSkills() { return tradeSkills; }
+
+    public Integer getWeaponLevel(Weapon weapon) {
+        return weapons.get(weapon);
     }
+
 }

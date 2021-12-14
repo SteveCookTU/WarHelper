@@ -1,11 +1,16 @@
 package me.stevecook.warhelper.structure;
 
+import me.stevecook.warhelper.structure.enums.Tradeskill;
+import me.stevecook.warhelper.structure.enums.Weapon;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 public class RegisterSlashCommands {
 
@@ -90,38 +95,22 @@ public class RegisterSlashCommands {
         jda.upsertCommand(new CommandData("register", "Register user data from new world to discord")
                         .addSubcommands(new SubcommandData("mainhand", "Set the main hand weapon of your character")
                                         .addOptions(new OptionData(OptionType.STRING, "weapon", "The weapon to set", true)
-                                                        .addChoices(new Command.Choice("Sword and Shield", "sword and shield"),
-                                                                new Command.Choice("Rapier", "rapier"),
-                                                                new Command.Choice("Hatchet", "hatchet"),
-                                                                new Command.Choice("Spear", "spear"),
-                                                                new Command.Choice("Great Axe", "great axe"),
-                                                                new Command.Choice("War Hammer", "war hammer"),
-                                                                new Command.Choice("Bow", "bow"),
-                                                                new Command.Choice("Musket", "musket"),
-                                                                new Command.Choice("Fire Staff", "fire staff"),
-                                                                new Command.Choice("Life Staff", "life staff"),
-                                                                new Command.Choice("Ice Gauntlet", "ice gauntlet"),
-                                                                new Command.Choice("Void Gauntlet", "void gauntlet")),
-                                                new OptionData(OptionType.INTEGER, "level", "Weapon skill level", true)),
+                                                        .addChoices(EnumSet.allOf(Weapon.class).stream().map(w -> new Command.Choice(w.getLabel(), w.toString())).collect(Collectors.toList()))),
                                 new SubcommandData("secondary", "Set the secondary weapon of your character")
                                         .addOptions(new OptionData(OptionType.STRING, "weapon", "The weapon to set", true)
-                                                        .addChoices(new Command.Choice("Sword and Shield", "sword and shield"),
-                                                                new Command.Choice("Rapier", "rapier"),
-                                                                new Command.Choice("Hatchet", "hatchet"),
-                                                                new Command.Choice("Spear", "spear"),
-                                                                new Command.Choice("Great Axe", "great axe"),
-                                                                new Command.Choice("War Hammer", "war hammer"),
-                                                                new Command.Choice("Bow", "bow"),
-                                                                new Command.Choice("Musket", "musket"),
-                                                                new Command.Choice("Fire Staff", "fire staff"),
-                                                                new Command.Choice("Life Staff", "life staff"),
-                                                                new Command.Choice("Ice Gauntlet", "ice gauntlet"),
-                                                                new Command.Choice("Void Gauntlet", "void gauntlet")),
-                                                new OptionData(OptionType.INTEGER, "level", "Weapon skill level", true)),
+                                                        .addChoices(EnumSet.allOf(Weapon.class).stream().map(w -> new Command.Choice(w.getLabel(), w.toString())).collect(Collectors.toList()))),
+                                new SubcommandData("weaponlevel", "Set the level of a specific weapon")
+                                        .addOptions(new OptionData(OptionType.STRING, "weapon", "The weapon to set", true)
+                                                .addChoices(EnumSet.allOf(Weapon.class).stream().map(w -> new Command.Choice(w.getLabel(), w.toString())).collect(Collectors.toList())),
+                                                new OptionData(OptionType.INTEGER, "level", "The level of the weapon", true)),
                                 new SubcommandData("level", "Set the level of your character")
                                         .addOptions(new OptionData(OptionType.INTEGER, "level", "Character level", true)),
                                 new SubcommandData("gearscore", "Set the overall gear score of your character")
-                                        .addOptions(new OptionData(OptionType.INTEGER, "gearscore", "Gear score number", true))))
+                                        .addOptions(new OptionData(OptionType.INTEGER, "gearscore", "Gear score number", true)),
+                                new SubcommandData("tradeskill", "Set the level of a specified tradeskill")
+                                        .addOptions(new OptionData(OptionType.STRING, "skill", "The specified skill", true)
+                                                .addChoices(EnumSet.allOf(Tradeskill.class).stream().map(s -> new Command.Choice(s.getLabel(), s.getId() + "")).collect(Collectors.toList()))
+                                        , new OptionData(OptionType.INTEGER, "level", "Skill level", true))))
                 .queue();
 
     }

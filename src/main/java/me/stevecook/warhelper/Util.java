@@ -109,11 +109,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
@@ -135,11 +135,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
@@ -161,11 +161,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
@@ -187,11 +187,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
@@ -213,11 +213,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
@@ -273,11 +273,11 @@ public class Util {
                                 .append("`")
                                 .append(String.format("%d", userData.getMainHandLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getMainHand()))
+                                .append(userData.getMainHand() == null ? "N/A" : userData.getMainHand().getAbbreviation())
                                 .append(",")
                                 .append(String.format("%d", userData.getSecondaryLevel()))
                                 .append(" ")
-                                .append(UserData.getWeaponAbbreviation(userData.getSecondary()))
+                                .append(userData.getSecondary() == null ? "N/A" : userData.getSecondary().getAbbreviation())
                                 .append("`")
                                 .append("\n");
                     }
