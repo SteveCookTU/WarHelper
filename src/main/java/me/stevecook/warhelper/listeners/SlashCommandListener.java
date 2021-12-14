@@ -304,7 +304,7 @@ public class SlashCommandListener implements EventListener {
             while (percentView.length() < (percent / 2)) {
                 percentView.append(".");
             }
-            eb.addField(w.getLabel(), "||" + percentView + "|| " + percent + "%", false);
+            eb.addField(w.getLabel(), "||```" + percentView + "```|| " + percent + "%", false);
         }
     }
 
