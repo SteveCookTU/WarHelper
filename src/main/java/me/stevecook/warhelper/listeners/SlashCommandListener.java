@@ -207,7 +207,7 @@ public class SlashCommandListener implements EventListener {
     }
 
     private void generateStatsEmbed(SlashCommandEvent e, boolean ephemeral) {
-        e.reply("Generating stats embed...").setEphemeral(ephemeral).queue();
+        e.deferReply().setEphemeral(ephemeral).queue();
         int averageGearScore = 0;
         int averageLevel = 0;
         String titleKey = "Global";
@@ -251,12 +251,12 @@ public class SlashCommandListener implements EventListener {
                     averageLevel = averageLevel / registeredLevel;
 
                 } else {
-                    e.getHook().editOriginal("The local option can only be called within a guild.").queue();
+                    e.getHook().sendMessage("The local option can only be called within a guild.").queue();
                     return;
                 }
             }
             case "global" ->  {
-                e.getHook().editOriginal("This option is temporarily disabled.").queue();
+                e.getHook().sendMessage("This option is temporarily disabled.").queue();
                 return;
             }
         }
@@ -270,7 +270,7 @@ public class SlashCommandListener implements EventListener {
         addWeaponCountsToEmbed(mainHandCount, eb);
         eb.addField("", "__**Secondary Selections:**__", false);
         addWeaponCountsToEmbed(secondaryCount, eb);
-        e.getHook().editOriginalEmbeds(eb.build()).queue();
+        e.getHook().sendMessageEmbeds(eb.build()).queue();
     }
 
     private void addWeaponCountsToEmbed(HashMap<Weapon, Integer> weaponCounts, EmbedBuilder eb) {
