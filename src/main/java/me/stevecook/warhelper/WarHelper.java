@@ -204,6 +204,23 @@ public class WarHelper {
         return null;
     }
 
+    public List<UserData> getAllUserData() {
+        List<UserData> userDataList = new ArrayList<>();
+        if(mongoClient != null) {
+            MongoCollection<Document> userDataCol = mongoClient.getDatabase("warhelperDB").getCollection("UserData");
+            FindIterable<Document> results = userDataCol.find()
+                    .projection(Projections.excludeId());
+            for (Document result :
+                    results) {
+                Map<Long, UserData> temp = gson.fromJson(result.toJson(), new TypeToken<Map<Long, UserData>>(){}.getType());
+                userDataList.addAll(temp.values());
+            }
+            return userDataList;
+        } else {
+            return userDataMap.values().stream().toList();
+        }
+    }
+
     public UserData getUserData(long userID) {
         if(mongoClient != null) {
             MongoCollection<Document> userDataCol = mongoClient.getDatabase("warhelperDB").getCollection("UserData");

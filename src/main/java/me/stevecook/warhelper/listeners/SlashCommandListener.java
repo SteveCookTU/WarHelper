@@ -256,8 +256,28 @@ public class SlashCommandListener implements EventListener {
                 }
             }
             case "global" ->  {
-                e.getHook().sendMessage("This option is temporarily disabled.").queue();
-                return;
+                for(UserData userData : wh.getAllUserData()) {
+                    if(userData != null) {
+                        if (userData.getLevel() > 1) {
+                            averageLevel += userData.getLevel();
+                            registeredLevel += 1;
+                        }
+                        if (userData.getGearScore() > 0) {
+                            averageGearScore += userData.getGearScore();
+                            registeredGearScore += 1;
+                        }
+                        if (userData.getMainHand() != null) {
+                            mainHandCount.put(userData.getMainHand(),
+                                    mainHandCount.get(userData.getMainHand()) + 1);
+                        }
+                        if (userData.getSecondary() != null) {
+                            secondaryCount.put(userData.getSecondary(),
+                                    secondaryCount.get(userData.getSecondary()) + 1);
+                        }
+                    }
+                    averageGearScore = averageGearScore / registeredGearScore;
+                    averageLevel = averageLevel / registeredLevel;
+                }
             }
         }
         EmbedBuilder eb = new EmbedBuilder();
