@@ -275,9 +275,9 @@ public class SlashCommandListener implements EventListener {
                                     secondaryCount.get(userData.getSecondary()) + 1);
                         }
                     }
-                    averageGearScore = averageGearScore / registeredGearScore;
-                    averageLevel = averageLevel / registeredLevel;
                 }
+                averageGearScore = averageGearScore / registeredGearScore;
+                averageLevel = averageLevel / registeredLevel;
             }
         }
         EmbedBuilder eb = new EmbedBuilder();
