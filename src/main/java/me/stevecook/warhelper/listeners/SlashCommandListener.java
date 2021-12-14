@@ -227,21 +227,23 @@ public class SlashCommandListener implements EventListener {
                     for (Member m : e.getGuild().getMembers()) {
                         if (!m.getUser().isBot()) {
                             UserData userData = wh.getUserData(m.getIdLong());
-                            if (userData.getLevel() > 1) {
-                                averageLevel += userData.getLevel();
-                                registeredLevel += 1;
-                            }
-                            if (userData.getGearScore() > 0) {
-                                averageGearScore += userData.getGearScore();
-                                registeredGearScore += 1;
-                            }
-                            if (userData.getMainHand() != null) {
-                                mainHandCount.put(userData.getMainHand(),
-                                        mainHandCount.get(userData.getMainHand()) + 1);
-                            }
-                            if (userData.getSecondary() != null) {
-                                secondaryCount.put(userData.getSecondary(),
-                                        secondaryCount.get(userData.getSecondary()) + 1);
+                            if(userData != null) {
+                                if (userData.getLevel() > 1) {
+                                    averageLevel += userData.getLevel();
+                                    registeredLevel += 1;
+                                }
+                                if (userData.getGearScore() > 0) {
+                                    averageGearScore += userData.getGearScore();
+                                    registeredGearScore += 1;
+                                }
+                                if (userData.getMainHand() != null) {
+                                    mainHandCount.put(userData.getMainHand(),
+                                            mainHandCount.get(userData.getMainHand()) + 1);
+                                }
+                                if (userData.getSecondary() != null) {
+                                    secondaryCount.put(userData.getSecondary(),
+                                            secondaryCount.get(userData.getSecondary()) + 1);
+                                }
                             }
                         }
                     }
