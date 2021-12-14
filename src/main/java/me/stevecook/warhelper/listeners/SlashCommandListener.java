@@ -255,7 +255,10 @@ public class SlashCommandListener implements EventListener {
                     return;
                 }
             }
-            case "global" -> e.getHook().editOriginal("This option is temporarily disabled.").queue();
+            case "global" ->  {
+                e.getHook().editOriginal("This option is temporarily disabled.").queue();
+                return;
+            }
         }
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("War Helper Stats - " + titleKey);
