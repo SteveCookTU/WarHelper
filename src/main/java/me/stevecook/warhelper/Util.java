@@ -309,7 +309,7 @@ public class Util {
             if (s.charAt(i) != '_')
                 sb.append(EMOJI_LETTERS[s.toLowerCase().charAt(i) - 97]).append(" ");
             else
-                sb.append("\t");
+                sb.append("    ");
         }
         return sb.toString();
     }
