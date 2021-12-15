@@ -200,9 +200,138 @@ public class SlashCommandListener implements EventListener {
                         e.reply("This command can only be used in guilds.").setEphemeral(true).queue();
                 }
             } else if (e.getName().equalsIgnoreCase("warstats")) {
-                generateStatsEmbed(e, e.isFromGuild() && !wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(),
-                        Objects.requireNonNull(e.getMember()).getRoles()));
+                if (e.getSubcommandName() != null) {
+                    switch (e.getSubcommandName()) {
+                        case "summary" -> generateStatsEmbed(e,
+                                e.isFromGuild() && !wh.hasPermission(Objects.requireNonNull(e.getGuild()).getIdLong(),
+                                        Objects.requireNonNull(e.getMember()).getRoles()));
+                        case "tradeskill" -> searchTradeSkills(e);
+                        case "weapon" -> searchWeaponLevels(e);
+                        case "gearscore" -> searchGearScore(e);
+                        case "level" -> searchLevel(e);
+                    }
+                }
             }
+        }
+    }
+
+    private void searchTradeSkills(SlashCommandEvent e) {
+        e.deferReply().setEphemeral(true).queue();
+        if (e.isFromGuild() && e.getGuild() != null) {
+            Tradeskill skill = Arrays.stream(Tradeskill.values())
+                    .filter(s -> s.getId() == Objects.requireNonNull(e.getOption("skill")).getAsLong())
+                    .toList().get(0);
+            int level = e.getOption("level") != null ?
+                    (int) (Objects.requireNonNull(e.getOption("level")).getAsLong() > 200 ? 200 :
+                            Objects.requireNonNull(
+                                    e.getOption("level")).getAsLong()) : 200;
+            Map<Long, UserData> userDataMap =
+                    wh.getUserData(e.getGuild().getMembers().stream().map(Member::getIdLong).toList());
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("War Helper Search - " + skill.getLabel());
+            eb.setDescription("Minimum Level: " + level);
+            StringBuilder names = new StringBuilder();
+            for (Map.Entry<Long, UserData> ud : userDataMap.entrySet()) {
+                if (e.getGuild().getMemberById(ud.getKey()) != null) {
+                    if (ud.getValue().getTradeSkill(skill) >= level) {
+                        names.append(
+                                        Objects.requireNonNull(e.getGuild().getMemberById(ud.getKey())).getEffectiveName())
+                                .append("`").append(ud.getValue().getTradeSkill(skill)).append("`\n");
+                    }
+                }
+            }
+            eb.addField("", names.toString().trim(), false);
+            e.getHook().sendMessageEmbeds(eb.build()).queue();
+        } else {
+            e.getHook().sendMessage("The local option can only be called within a guild.").queue();
+        }
+    }
+
+    private void searchWeaponLevels(SlashCommandEvent e) {
+        e.deferReply().setEphemeral(true).queue();
+        if (e.isFromGuild() && e.getGuild() != null) {
+            Weapon weapon = Weapon.valueOf(Objects.requireNonNull(e.getOption("weapon")).getAsString());
+            int level = e.getOption("level") != null ?
+                    (int) (Objects.requireNonNull(e.getOption("level")).getAsLong() > 20 ? 20 :
+                            Objects.requireNonNull(
+                                    e.getOption("level")).getAsLong()) : 20;
+            Map<Long, UserData> userDataMap =
+                    wh.getUserData(e.getGuild().getMembers().stream().map(Member::getIdLong).toList());
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("War Helper Search - " + weapon.getLabel());
+            eb.setDescription("Minimum Level: " + level);
+            StringBuilder names = new StringBuilder();
+            for (Map.Entry<Long, UserData> ud : userDataMap.entrySet()) {
+                if (e.getGuild().getMemberById(ud.getKey()) != null) {
+                    if (ud.getValue().getWeaponLevel(weapon) >= level) {
+                        names.append(
+                                        Objects.requireNonNull(e.getGuild().getMemberById(ud.getKey())).getEffectiveName())
+                                .append("`").append(ud.getValue().getWeaponLevel(weapon)).append("`\n");
+                    }
+                }
+            }
+            eb.addField("", names.toString().trim(), false);
+            e.getHook().sendMessageEmbeds(eb.build()).queue();
+        } else {
+            e.getHook().sendMessage("The local option can only be called within a guild.").queue();
+        }
+    }
+
+    private void searchGearScore(SlashCommandEvent e) {
+        e.deferReply().setEphemeral(true).queue();
+        if (e.isFromGuild() && e.getGuild() != null) {
+            int level = e.getOption("score") != null ?
+                    (int) (Objects.requireNonNull(e.getOption("score")).getAsLong() > 600 ? 600 :
+                            Objects.requireNonNull(
+                                    e.getOption("score")).getAsLong()) : 600;
+            Map<Long, UserData> userDataMap =
+                    wh.getUserData(e.getGuild().getMembers().stream().map(Member::getIdLong).toList());
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("War Helper Search - Gear Score");
+            eb.setDescription("Minimum Score: " + level);
+            StringBuilder names = new StringBuilder();
+            for (Map.Entry<Long, UserData> ud : userDataMap.entrySet()) {
+                if (e.getGuild().getMemberById(ud.getKey()) != null) {
+                    if (ud.getValue().getGearScore() >= level) {
+                        names.append(
+                                        Objects.requireNonNull(e.getGuild().getMemberById(ud.getKey())).getEffectiveName())
+                                .append("`").append(ud.getValue().getGearScore()).append("`\n");
+                    }
+                }
+            }
+            eb.addField("", names.toString().trim(), false);
+            e.getHook().sendMessageEmbeds(eb.build()).queue();
+        } else {
+            e.getHook().sendMessage("The local option can only be called within a guild.").queue();
+        }
+    }
+
+    private void searchLevel(SlashCommandEvent e) {
+        e.deferReply().setEphemeral(true).queue();
+        if (e.isFromGuild() && e.getGuild() != null) {
+            int level = e.getOption("level") != null ?
+                    (int) (Objects.requireNonNull(e.getOption("level")).getAsLong() > 60 ? 60 :
+                            Objects.requireNonNull(
+                                    e.getOption("level")).getAsLong()) : 60;
+            Map<Long, UserData> userDataMap =
+                    wh.getUserData(e.getGuild().getMembers().stream().map(Member::getIdLong).toList());
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("War Helper Search - Level");
+            eb.setDescription("Minimum Level: " + level);
+            StringBuilder names = new StringBuilder();
+            for (Map.Entry<Long, UserData> ud : userDataMap.entrySet()) {
+                if (e.getGuild().getMemberById(ud.getKey()) != null) {
+                    if (ud.getValue().getLevel() >= level) {
+                        names.append(
+                                        Objects.requireNonNull(e.getGuild().getMemberById(ud.getKey())).getEffectiveName())
+                                .append("`").append(ud.getValue().getLevel()).append("`\n");
+                    }
+                }
+            }
+            eb.addField("", names.toString().trim(), false);
+            e.getHook().sendMessageEmbeds(eb.build()).queue();
+        } else {
+            e.getHook().sendMessage("The local option can only be called within a guild.").queue();
         }
     }
 
@@ -227,7 +356,7 @@ public class SlashCommandListener implements EventListener {
                     for (Member m : e.getGuild().getMembers()) {
                         if (!m.getUser().isBot()) {
                             UserData userData = wh.getUserData(m.getIdLong());
-                            if(userData != null) {
+                            if (userData != null) {
                                 if (userData.getLevel() > 1) {
                                     averageLevel += userData.getLevel();
                                     registeredLevel += 1;
@@ -255,9 +384,9 @@ public class SlashCommandListener implements EventListener {
                     return;
                 }
             }
-            case "global" ->  {
-                for(UserData userData : wh.getAllUserData()) {
-                    if(userData != null) {
+            case "global" -> {
+                for (UserData userData : wh.getAllUserData()) {
+                    if (userData != null) {
                         if (userData.getLevel() > 1) {
                             averageLevel += userData.getLevel();
                             registeredLevel += 1;

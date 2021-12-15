@@ -100,7 +100,6 @@ public class WarHelper {
                 @Override
                 public void call(Object... objects) {
                     long userID = Long.parseLong(String.valueOf(objects[0]));
-
                 }
 
                 private Emitter.Listener init(WarHelper var){
@@ -221,6 +220,27 @@ public class WarHelper {
         }
     }
 
+    public Map<Long, UserData> getUserData(List<Long> userIDs) {
+        Map<Long, UserData> userDataList = new HashMap<>();
+        if(mongoClient != null) {
+            MongoCollection<Document> userDataCol = mongoClient.getDatabase("warhelperDB").getCollection("UserData");
+            FindIterable<Document> results = userDataCol.find()
+                    .projection(Projections.excludeId());
+            for (Document result :
+                    results) {
+                Map<Long, UserData> temp = gson.fromJson(result.toJson(), new TypeToken<Map<Long, UserData>>(){}.getType());
+                for (Map.Entry<Long, UserData> e:
+                     temp.entrySet()) {
+                    if(e.getValue() != null && userIDs.contains(e.getKey()))
+                        userDataList.put(e.getKey(), e.getValue());
+                }
+            }
+            return userDataList;
+        } else {
+            return userDataMap;
+        }
+    }
+
     public UserData getUserData(long userID) {
         if(mongoClient != null) {
             MongoCollection<Document> userDataCol = mongoClient.getDatabase("warhelperDB").getCollection("UserData");
@@ -244,9 +264,6 @@ public class WarHelper {
             MongoCollection<Document> userDataCol = mongoClient.getDatabase("warhelperDB").getCollection("UserData");
             Document result = userDataCol.find(Filters.exists(Long.toString(userID))).projection(Projections.excludeId()).first();
             if(result != null) {
-                Map<Long, UserData> temp = new TreeMap<>();
-                temp.put(userID, userData);
-                Document d = Document.parse(gson.toJson(temp, new TypeToken<Map<Long, UserData>>(){}.getType()));
                 userDataCol.deleteOne(Filters.exists(Long.toString(userID)));
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.add(Long.toString(userID), gson.toJsonTree(userData, new TypeToken<UserData>(){}.getType()));
