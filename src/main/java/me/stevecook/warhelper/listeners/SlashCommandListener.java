@@ -9,8 +9,9 @@ import me.stevecook.warhelper.structure.enums.Weapon;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,7 @@ public class SlashCommandListener implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent genericEvent) {
-        if (genericEvent instanceof SlashCommandEvent e) {
+        if (genericEvent instanceof SlashCommandInteractionEvent e) {
             if (e.getName().equalsIgnoreCase("war")) {
                 if (e.getSubcommandName() != null) {
                     switch (e.getSubcommandName()) {
@@ -215,7 +216,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void searchTradeSkills(SlashCommandEvent e) {
+    private void searchTradeSkills(SlashCommandInteractionEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.isFromGuild() && e.getGuild() != null) {
             Tradeskill skill = Arrays.stream(Tradeskill.values())
@@ -247,7 +248,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void searchWeaponLevels(SlashCommandEvent e) {
+    private void searchWeaponLevels(SlashCommandInteractionEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.isFromGuild() && e.getGuild() != null) {
             Weapon weapon = Weapon.valueOf(Objects.requireNonNull(e.getOption("weapon")).getAsString());
@@ -277,7 +278,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void searchGearScore(SlashCommandEvent e) {
+    private void searchGearScore(SlashCommandInteractionEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.isFromGuild() && e.getGuild() != null) {
             int level = e.getOption("score") != null ?
@@ -306,7 +307,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void searchLevel(SlashCommandEvent e) {
+    private void searchLevel(SlashCommandInteractionEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.isFromGuild() && e.getGuild() != null) {
             int level = e.getOption("level") != null ?
@@ -335,7 +336,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void generateStatsEmbed(SlashCommandEvent e, boolean ephemeral) {
+    private void generateStatsEmbed(SlashCommandInteractionEvent e, boolean ephemeral) {
         e.deferReply().setEphemeral(ephemeral).queue();
         int averageGearScore = 0;
         int averageLevel = 0;
@@ -437,7 +438,7 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void createAlert(SlashCommandEvent e) {
+    private void createAlert(SlashCommandInteractionEvent e) {
         LocalDate date;
         LocalTime time;
         try {
@@ -503,7 +504,7 @@ public class SlashCommandListener implements EventListener {
             String finalServer = server;
             e.getChannel().sendMessageEmbeds(eb.build()).queue(message -> {
                 for (String s : Util.REACTIONS) {
-                    message.addReaction(s).queue();
+                    message.addReaction(Emoji.fromUnicode(s)).queue();
                 }
                 wh.addWarMessage(message.getGuild().getIdLong(),
                         message.getChannel().getIdLong(),
@@ -526,11 +527,11 @@ public class SlashCommandListener implements EventListener {
         }
     }
 
-    private void archiveAlert(SlashCommandEvent e) {
+    private void archiveAlert(SlashCommandInteractionEvent e) {
         e.reply("Archiving is now automated. This command deprecated.").setEphemeral(true).queue();
     }
 
-    private void refreshEmbeds(SlashCommandEvent e) {
+    private void refreshEmbeds(SlashCommandInteractionEvent e) {
         e.deferReply().setEphemeral(true).queue();
         if (e.getOption("id") == null) {
             return;
@@ -540,7 +541,7 @@ public class SlashCommandListener implements EventListener {
         e.getHook().sendMessage("All embeds with the ID specified have been refreshed.").queue();
     }
 
-    private void editPerm(SlashCommandEvent e) {
+    private void editPerm(SlashCommandInteractionEvent e) {
         e.deferReply(true).queue();
         String sOption = Objects.requireNonNull(e.getOption("add_remove")).getAsString();
         long roleID = Objects.requireNonNull(e.getOption("role")).getAsRole().getIdLong();

@@ -35,7 +35,7 @@ public class ReactionListener extends ListenerAdapter {
                     e.getChannel().retrieveMessageById(e.getMessageIdLong()).queue(message -> {
                         MessageEmbed mb = message.getEmbeds().get(0);
                         UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()).substring(0, 36)));
-                        String reactionName = e.getReactionEmote().getName();
+                        String reactionName = e.getEmoji().getName();
                         AlertConnector ac = wh.getAlertConnector(uuid);
 
                         if (ac.getUsers().contains(e.getUserIdLong()))
@@ -99,7 +99,7 @@ public class ReactionListener extends ListenerAdapter {
                     e.getChannel().retrieveMessageById(e.getMessageIdLong()).queue(message -> {
                         MessageEmbed mb = message.getEmbeds().get(0);
                         UUID uuid = UUID.fromString(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(mb.getFooter()).getText()).substring(0, 36)));
-                        String reactionName = e.getReactionEmote().getName();
+                        String reactionName = e.getEmoji().getName();
 
                         AlertConnector ac = wh.getAlertConnector(uuid);
 

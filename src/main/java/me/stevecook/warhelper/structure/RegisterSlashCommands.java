@@ -5,10 +5,7 @@ import me.stevecook.warhelper.structure.enums.Weapon;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.EnumSet;
 import java.util.stream.Collectors;
@@ -16,7 +13,7 @@ import java.util.stream.Collectors;
 public class RegisterSlashCommands {
 
     public static void register(JDA jda) {
-        jda.upsertCommand(new CommandData("war", "Base command for war helper wars").addSubcommands(
+        jda.upsertCommand(Commands.slash("war", "Base command for war helper wars").addSubcommands(
                 new SubcommandData("alert",
                         "Creates a war alert with the designated parameters. (Bot admin)").addOptions(
                         new OptionData(OptionType.STRING, "server", "Designated server for the war", true),
@@ -54,7 +51,7 @@ public class RegisterSlashCommands {
                 new SubcommandData("refresh", "Refresh all current embeds (Bot admin)").addOptions(
                         new OptionData(OptionType.STRING, "id", "ID of the alert to archive", true)))).queue();
 
-        jda.upsertCommand(new CommandData("event", "Base command for war helper events.").addSubcommands(
+        jda.upsertCommand(Commands.slash("event", "Base command for war helper events.").addSubcommands(
                 new SubcommandData("local", "setup for local events").addOptions(
                         new OptionData(OptionType.STRING, "name", "name for the event", true),
                         new OptionData(OptionType.STRING, "territory", "Designated territory for the event",
@@ -96,7 +93,7 @@ public class RegisterSlashCommands {
                         new OptionData(OptionType.STRING, "time", "Designated time for the event (h:mma) Ex. 4:00PM",
                                 true)))).queue();
 
-        jda.upsertCommand(new CommandData("register", "Register user data from new world to discord").addSubcommands(
+        jda.upsertCommand(Commands.slash("register", "Register user data from new world to discord").addSubcommands(
                 new SubcommandData("mainhand", "Set the main hand weapon of your character").addOptions(
                         new OptionData(OptionType.STRING, "weapon", "The weapon to set", true).addChoices(
                                 EnumSet.allOf(Weapon.class).stream()
@@ -124,7 +121,7 @@ public class RegisterSlashCommands {
                                         .collect(Collectors.toList())),
                         new OptionData(OptionType.INTEGER, "level", "Skill level", true)))).queue();
 
-        jda.upsertCommand(new CommandData("warstats", "View stats from WarHelper").addSubcommands(
+        jda.upsertCommand(Commands.slash("warstats", "View stats from WarHelper").addSubcommands(
                                 new SubcommandData("summary", "Show a general summary of WarHelper stats").addOptions(
                                         new OptionData(OptionType.STRING, "locale", "Pull local or global stats", true).addChoices(
                                                 new Command.Choice("Local", "local"), new Command.Choice("Global", "global"))))

@@ -7,7 +7,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,8 +50,8 @@ public class Util {
                             message.editMessageEmbeds(eb.build()).queue();
 
                             for(String s : REACTIONS) {
-                                if(message.getReactions().stream().noneMatch(r -> r.getReactionEmote().getName().equalsIgnoreCase(s))) {
-                                    message.addReaction(s).queue();
+                                if(message.getReactions().stream().noneMatch(r -> r.getEmoji().getName().equalsIgnoreCase(s))) {
+                                    message.addReaction(Emoji.fromUnicode(s)).queue();
                                 }
                             }
 
